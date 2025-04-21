@@ -8,7 +8,15 @@ This repo (once applied initially manually) is managed by Atlantis and upgraded 
 
 ### Manual usage
 #### Prerequisites
-Credentials must be in place for `Kubernetes` and `AWS` in your environment. Additionally there must be a variable in your environment containing the secret for Authentik to use as it's API key. This variable should be set as `TF_VAR_authentik_api_key=<value>`. Finally, you need a variabl in your environment indicating the path to your Kubernetes config such as `KUBE_CONFIG_PATH=~/.kube/config`. These variables can automatically be added to your environment by running `source setup_env.sh`
+Credentials must be in place for `Kubernetes` and `AWS` in your environment. Additionally there must be two environment variables set before you can run terraform.
+
+|Variable|Purpose|
+|--------|-------|
+|TF_VAR_authentik_api_key|Sets the API key for the authentik provider|
+|KUBE_CONFIG_PATH|Tells the Kubernetes provider where to find your kubectl config, should probably be `~/.kube/config`|
+
+These variables can automatically be added to your environment by running `source setup_env.sh`
+
 
 
 #### Terraform
