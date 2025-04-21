@@ -24,6 +24,10 @@ provider "authentik" {
   insecure = true
 }
 
+resource "random_password" "test" {
+  length = 20
+}
+
 module "metallb" {
   source = "./modules/metallb"
 }
