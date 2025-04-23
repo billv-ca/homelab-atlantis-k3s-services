@@ -284,9 +284,9 @@ resource "authentik_user" "bill" {
   email = "bill@vandenberk.me"
   name = "Bill Vandenberk"
   attributes = jsonencode({
-    kube_token = data.kubernetes_secret_v1.bill_token.data["token"]
+    kube_token = sensitive(data.kubernetes_secret_v1.bill_token.data["token"])
   })
-  password = random_password.bill_pw.result
+  password = sensitive(random_password.bill_pw.result)
   groups = [data.authentik_group.admins.id,
             module.aws.admins_group_id,
             module.zoho.users_group_id,
@@ -308,7 +308,7 @@ resource "authentik_user" "trina" {
   username = "trina"
   email = "trina@vandenberk.me"
   name = "Trina Vandenberk"
-  password = random_password.trina_pw.result
+  password = sensitive(random_password.trina_pw.result)
   groups = [module.mealie.users_group_id, 
             authentik_group.zoho_users.id,
             module.ocis.users_group_id,
