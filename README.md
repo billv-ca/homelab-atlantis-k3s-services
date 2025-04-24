@@ -1,4 +1,4 @@
-# homelab-k3s-services
+# homelab-atlantis-k3s-services
 This repo exists as part of the billv-ca/homelab-* series of repositories containing IaC and documentation for my homelab.
 
 This repo contains parts of the homelab running in Kubernetes that sould be applied after the `base-services` contained in a separate repo.
