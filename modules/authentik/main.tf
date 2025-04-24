@@ -196,6 +196,7 @@ module "ocis-iOS" {
     matching_mode = "strict",
     url           = "oc.ios://ios.owncloud.com",
   }]
+  access_token_validity = "days=30"
 }
 
 module "ocis-android" {
