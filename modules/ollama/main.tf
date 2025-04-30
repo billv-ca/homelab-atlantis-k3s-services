@@ -33,17 +33,17 @@ resource "helm_release" "ollama" {
 
   set {
     name = "ollama.models.pull[0]"
-    value = "llama3.2"
+    value = "granite3.3:2b"
   }
 
   set {
     name = "ollama.models.run[0]"
-    value = "llama3.2"
+    value = "granite3.3:2b"
   }
   
   set{
     name = "resources.requests.memory"
-    value = "4096Mi"
+    value = "6144Mi"
   }
 }
 
@@ -61,7 +61,7 @@ resource "helm_release" "openwebui" {
 
   set {
     name = "ollamaUrls[0]"
-    value = "http://10.206.101.10:11434"
+    value = "http://ollama.ollama.svc.cluster.local:11434"
   }
 
   set {
@@ -100,6 +100,11 @@ resource "helm_release" "openwebui" {
   }
 
   set {
+    name = "sso.roleManagement.rolesClaim"
+    value = "groups"
+  }
+
+  set {
     name = "sso.enabled"
     value = true
   }
@@ -124,8 +129,28 @@ resource "helm_release" "openwebui" {
     value = "ENABLE_LOGIN_FORM"
   }
 
-    set {
+  set {
     name = "extraEnvVars[0].value"
+    value = "\"false\""
+  }
+
+  set {
+    name = "extraEnvVars[1].name"
+    value = "DEFAULT_USER_ROLE"
+  }
+
+  set {
+    name = "extraEnvVars[1].value"
+    value = "user"
+  }
+  
+  set {
+    name = "extraEnvVars[2].name"
+    value = "ENABLE_PERSISTENT_CONFIG"
+  }
+
+  set {
+    name = "extraEnvVars[2].value"
     value = "\"false\""
   }
 }

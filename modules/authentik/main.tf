@@ -138,6 +138,7 @@ module "ollama" {
       matching_mode = "regex",
       url           = "https://ollama.billv.ca/.*",
   }]
+  access_token_validity = "days=1"
 }
 
 module "ocis" {
