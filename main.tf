@@ -28,6 +28,10 @@ module "metallb" {
   source = "./modules/metallb"
 }
 
+module "ollama" {
+  source = "./modules/ollama"
+}
+
 module "cert_manager" {
   source = "./modules/cert-manager"
 }
