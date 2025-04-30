@@ -113,6 +113,21 @@ resource "helm_release" "openwebui" {
     name = "sso.enableSignup"
     value = true
   }
+
+  set {
+    name = "enableOpenaiApi"
+    value = false
+  }
+
+  set {
+    name = "extraEnvVars[0].name"
+    value = "ENABLE_LOGIN_FORM"
+  }
+
+    set {
+    name = "extraEnvVars[0].value"
+    value = "\"false\""
+  }
 }
 
 resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
