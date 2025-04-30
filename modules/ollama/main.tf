@@ -63,4 +63,101 @@ resource "helm_release" "openwebui" {
     name = "ollamaUrls[0]"
     value = "http://10.206.101.10:11434"
   }
+
+  set {
+    name = "sso.oidc.clientId"
+    value = var.OIDC_CLIENT_ID
+  }
+
+  set_sensitive {
+    name = "sso.oidc.clientSecret"
+    value = var.OIDC_CLIENT_SECRET
+  }
+
+  set {
+    name = "sso.oidc.enabled"
+    value = true
+  }
+
+  set {
+    name = "sso.oidc.providerName"
+    value = var.OIDC_PROVIDER_NAME
+  }
+
+  set {
+    name = "sso.oidc.providerUrl"
+    value = var.OIDC_CONFIGURATION_URL
+  }
+
+  set {
+    name = "sso.roleManagement.adminRoles"
+    value = var.OIDC_ADMIN_GROUP
+  }
+  
+  set {
+    name = "sso.roleManagement.allowedRoles"
+    value = var.OIDC_USER_GROUP
+  }
+
+  set {
+    name = "sso.enabled"
+    value = true
+  }
+
+  set {
+    name = "sso.enableRoleManagement"
+    value = true
+  }
+
+  set {
+    name = "sso.enableSignup"
+    value = true
+  }
+}
+
+resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind" = "Certificate"
+    "metadata" = {
+      "name" = "ollama-billv-ca"
+      "namespace" = "open-webui"
+    }
+    "spec" = {
+      "dnsNames" = [
+        "ollama.billv.ca",
+      ]
+      "issuerRef" = {
+        "kind" = "ClusterIssuer"
+        "name" = "letsencrypt"
+      }
+      "secretName" = "ollama-billv-ca"
+    }
+  }
+}
+
+resource "kubernetes_manifest" "ingressroute" {
+  manifest = {
+    "apiVersion" = "traefik.containo.us/v1alpha1"
+    "kind" = "IngressRoute"
+    "metadata" = {
+      "name" = "open-webui"
+      "namespace" = "open-webui"
+    }
+    "spec" = {
+      "entryPoints" = ["websecure"]
+      "routes" = [{
+        "kind" = "Rule"
+        "match" = "Host(`ollama.billv.ca`)"
+        "services" = [{
+          "kind" = "Service"
+          "name" = "open-webui"
+          "port" = 80
+        }]
+      }]
+      "tls" = {
+        "secretName" = "ollama-billv-ca"
+      }
+    }
+  }
 }
