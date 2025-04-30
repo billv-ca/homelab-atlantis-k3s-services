@@ -1,3 +1,7 @@
+locals {
+  model = "llama3.2"
+}
+
 resource "helm_release" "ollama" {
   repository = "https://otwld.github.io/ollama-helm"
   chart = "ollama"
@@ -33,12 +37,12 @@ resource "helm_release" "ollama" {
 
   set {
     name = "ollama.models.pull[0]"
-    value = "granite3.3:2b"
+    value = local.model
   }
 
   set {
     name = "ollama.models.run[0]"
-    value = "granite3.3:2b"
+    value = local.model
   }
   
   set{
