@@ -47,7 +47,7 @@ resource "helm_release" "ollama" {
   
   set{
     name = "resources.requests.memory"
-    value = "6144Mi"
+    value = "10240Mi"
   }
 }
 
