@@ -1,5 +1,5 @@
 locals {
-  model = "llama3.2"
+  pull_models = ["qwen3:0.6b", "qwen3:1.7b"]
 }
 
 resource "helm_release" "ollama" {
@@ -35,19 +35,22 @@ resource "helm_release" "ollama" {
     value = "10.206.101.10"
   }
 
-  set {
-    name = "ollama.models.pull[0]"
-    value = local.model
+  dynamic "set" {
+    for_each = local.pull_models
+    content {
+      name = "ollama.models.pull[${set.key}]"
+      value = set.value
+    }
   }
 
-  set {
-    name = "ollama.models.run[0]"
-    value = local.model
-  }
-  
   set{
     name = "resources.requests.memory"
-    value = "10240Mi"
+    value = "4096Mi"
+  }
+
+  set{
+    name = "resources.limits.cpu"
+    value = "2000m"
   }
 }
 
