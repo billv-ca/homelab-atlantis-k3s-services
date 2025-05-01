@@ -25,3 +25,13 @@ output "mealie_client_secret" {
 output "ocis_client_id" {
   value = module.ocis.client_id
 }
+
+
+output "ollama_client_id" {
+  value = module.ollama.client_id
+}
+
+output "ollama_client_secret" {
+  value = module.ollama.client_secret
+  sensitive = true
+}

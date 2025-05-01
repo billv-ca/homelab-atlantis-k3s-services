@@ -28,6 +28,12 @@ module "metallb" {
   source = "./modules/metallb"
 }
 
+module "ollama" {
+  source = "./modules/ollama"
+  OIDC_CLIENT_ID = module.authentik.ollama_client_id
+  OIDC_CLIENT_SECRET = module.authentik.ollama_client_secret
+}
+
 module "cert_manager" {
   source = "./modules/cert-manager"
 }
