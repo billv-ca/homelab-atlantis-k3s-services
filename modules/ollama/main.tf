@@ -161,6 +161,16 @@ resource "helm_release" "openwebui" {
     name = "extraEnvVars[2].value"
     value = "\"false\""
   }
+
+  set {
+    name = "extraEnvVars[3].name"
+    value = "WEBUI_URL"
+  }
+
+  set {
+    name = "extraEnvVars[3].value"
+    value = "\"https://ollama.billv.ca\""
+  }
 }
 
 resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
