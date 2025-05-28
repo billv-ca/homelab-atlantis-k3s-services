@@ -169,7 +169,7 @@ resource "helm_release" "openwebui" {
 
   set {
     name = "extraEnvVars[3].value"
-    value = "\"https://ollama.billv.ca\""
+    value = "https://ollama.billv.ca"
   }
 }
 
