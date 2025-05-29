@@ -102,12 +102,9 @@ resource "kubernetes_service_v1" "meshcentral" {
   metadata {
     name = "meshcentral"
     namespace = kubernetes_namespace_v1.meshcentral.metadata.0.name
-    annotations = {
-      "metallb.universe.tf/loadBalancerIPs" = "10.206.101.4"
-    }
   }
   spec {
-    type = "LoadBalancer"
+    type = "ClusterIP"
     selector = {
         "app" = "meshcentral"
     }
@@ -120,66 +117,70 @@ resource "kubernetes_service_v1" "meshcentral" {
   }
 }
 
-# resource "kubernetes_manifest" "certificate_meshcentral_billv_ca" {
-#   manifest = {
-#     "apiVersion" = "cert-manager.io/v1"
-#     "kind" = "Certificate"
-#     "metadata" = {
-#       "name" = "meshcentral-billv-ca"
-#       "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
-#     }
-#     "spec" = {
-#       "dnsNames" = [
-#         "meshcentral.billv.ca",
-#       ]
-#       "issuerRef" = {
-#         "kind" = "ClusterIssuer"
-#         "name" = "letsencrypt"
-#       }
-#       "secretName" = "meshcentral-billv-ca"
-#     }
-#   }
-# }
+resource "kubernetes_manifest" "certificate_meshcentral_billv_ca" {
+  manifest = {
+    "apiVersion" = "cert-manager.io/v1"
+    "kind" = "Certificate"
+    "metadata" = {
+      "name" = "meshcentral-billv-ca"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+    }
+    "spec" = {
+      "dnsNames" = [
+        "meshcentral.billv.ca",
+      ]
+      "issuerRef" = {
+        "kind" = "ClusterIssuer"
+        "name" = "letsencrypt"
+      }
+      "secretName" = "meshcentral-billv-ca"
+    }
+  }
+}
 
-# resource "kubernetes_manifest" "ingressroute" {
-#   manifest = {
-#     "apiVersion" = "traefik.containo.us/v1alpha1"
-#     "kind" = "IngressRoute"
-#     "metadata" = {
-#       "name" = "meshcentral"
-#       "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
-#     }
-#     "spec" = {
-#       "entryPoints" = ["websecure"]
-#       "routes" = [{
-#         "kind" = "Rule"
-#         "match" = "Host(`meshcentral.billv.ca`)"
-#         "services" = [{
-#           "kind" = "Service"
-#           "name" = "meshcentral"
-#           "port" = 443
-#           "serversTransport" = "meshcentral"
-#           "scheme" = "https"
-#         }]
-#       }]
-#       "tls" = {
-#         "secretName" = "meshcentral-billv-ca"
-#       }
-#     }
-#   }
-# }
+resource "kubernetes_manifest" "ingressroute" {
+  manifest = {
+    "apiVersion" = "traefik.containo.us/v1alpha1"
+    "kind" = "IngressRoute"
+    "metadata" = {
+      "name" = "meshcentral"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+    }
+    "spec" = {
+      "entryPoints" = ["websecure"]
+      "routes" = [{
+        "kind" = "Rule"
+        "match" = "Host(`meshcentral.billv.ca`)"
+        "middlewares" = [{
+          "name" = "authentik"
+          "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+        }]
+        "services" = [{
+          "kind" = "Service"
+          "name" = "meshcentral"
+          "port" = 443
+          "serversTransport" = "meshcentral"
+          "scheme" = "https"
+        }]
+      }]
+      "tls" = {
+        "secretName" = "meshcentral-billv-ca"
+      }
+    }
+  }
+}
 
-# resource "kubernetes_manifest" "servers_transport" {
-#   manifest = {
-#     "apiVersion" = "traefik.io/v1alpha1"
-#     "kind" = "ServersTransport"
-#     "metadata" = {
-#       "name" = "meshcentral"
-#       "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
-#     }
-#     "spec" = {
-#       "serverName" = "meshcentral.${kubernetes_namespace_v1.meshcentral.metadata.0.name}.svc.cluster.local"
-#       "insecureSkipVerify" = "true"
-#     }
-#   }
-# }
+resource "kubernetes_manifest" "servers_transport" {
+  manifest = {
+    "apiVersion" = "traefik.io/v1alpha1"
+    "kind" = "ServersTransport"
+    "metadata" = {
+      "name" = "meshcentral"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+    }
+    "spec" = {
+      "serverName" = "meshcentral.${kubernetes_namespace_v1.meshcentral.metadata.0.name}.svc.cluster.local"
+      "insecureSkipVerify" = "true"
+    }
+  }
+}
