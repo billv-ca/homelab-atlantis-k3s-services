@@ -255,6 +255,17 @@ module "atlantis" {
   outpost_name = local.traefik_outpost_name
 }
 
+
+module "meshcentral" {
+  source = "./modules/forwardauth_bundle"
+  app_icon = "https://lh3.googleusercontent.com/2wMN7cAlupHliEsK4391xQz8PauJxC-RNQluK2P6jX1HoGlztrm_t5bLxIptWyrP59wnVQ=w16383"
+  app_name = "MeshCentral"
+  app_slug = "meshcentral"
+  app_external_host = "https://meshcentral.billv.ca"
+  app_namespace = "meshcentral"
+  outpost_name = local.traefik_outpost_name
+}
+
 module "longhorn" {
   source = "./modules/forwardauth_bundle"
   app_name = "longhorn"
@@ -318,6 +329,7 @@ resource "authentik_user" "bill" {
             module.ocis-android.admins_group_id,
             module.kube_dashboard.access_group_id,
             module.atlantis.access_group_id,
+            module.meshcentral.access_group_id,
             authentik_group.zoho_users.id]
 }
 
@@ -372,7 +384,8 @@ resource "authentik_outpost" "traefik" {
     module.wireguard.provider_id,
     module.kube_dashboard.provider_id,
     module.longhorn.provider_id,
-    module.atlantis.provider_id
+    module.atlantis.provider_id,
+    module.meshcentral.provider_id
   ]
   service_connection = authentik_service_connection_kubernetes.local.id
 }
