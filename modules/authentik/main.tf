@@ -124,6 +124,7 @@ module "mealie" {
       matching_mode = "regex",
       url           = "https://mealie.billv.ca/.*",
   }]
+  access_token_validity = "days=14"
 }
 
 
