@@ -259,7 +259,7 @@ module "atlantis" {
 
 module "meshcentral" {
   source = "./modules/forwardauth_bundle"
-  app_icon = "https://lh3.googleusercontent.com/2wMN7cAlupHliEsK4391xQz8PauJxC-RNQluK2P6jX1HoGlztrm_t5bLxIptWyrP59wnVQ=w16383"
+  app_icon = "https://github.com/Ylianst/MeshCentral/blob/master/public/images/meshicon256.png?raw=true"
   app_name = "MeshCentral"
   app_slug = "meshcentral"
   app_external_host = "https://meshcentral.billv.ca"
