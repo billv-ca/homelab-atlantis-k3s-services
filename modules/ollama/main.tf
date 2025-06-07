@@ -31,16 +31,6 @@ ollama:
     enabled: true
     type: amd
     number: 1
-
-# extraEnv:
-#   - name: HSA_OVERRIDE_GFX_VERSION
-#     value: "11.0.0"
-#   - name: HCC_AMDGPU_TARGET
-#     value: "gfx1101"
-#   - name: HIP_VISIBLE_DEVICES
-#     value: "0"
-#   - name: ROCR_VISIBLE_DEVICES
-#     value: "0"
  EOF
 ]
 
