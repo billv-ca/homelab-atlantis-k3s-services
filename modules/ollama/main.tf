@@ -1,5 +1,5 @@
 locals {
- pull_models = ["qwen3:14b", "gemma3:12b", "deepseek-r1:14b"]
+ pull_models = []
 }
 
 resource "helm_release" "ollama" {
