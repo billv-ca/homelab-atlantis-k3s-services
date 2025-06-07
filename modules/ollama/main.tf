@@ -1,58 +1,59 @@
-#locals {
-#  pull_models = ["qwen3:0.6b", "qwen3:1.7b"]
-#}
+locals {
+ pull_models = ["qwen3:14b", "gemma3:12b", "deepseek-r1:14b"]
+}
 
-#resource "helm_release" "ollama" {
-#  repository = "https://otwld.github.io/ollama-helm"
-#  chart = "ollama"
-#  version = "1.19.0"
-#  name = "ollama"
-#  create_namespace = true
-#  namespace = "ollama"
-#
-#  set {
-#    name = "persistentVolume.enabled"
-#    value = true
-#  }
-#
-#  set {
-#    name = "persistentVolume.size"
-#    value = "5Gi"
-#  }
-#
-#  set {
-#    name = "persistentVolume.storageClass"
-#    value = "longhorn"
-#  }
-#
-#  set {
-#    name = "service.type"
-#    value = "LoadBalancer"
-#  }
-#
-#  set {
-#    name = "service.annotations.metallb\\.universe\\.tf\\/loadBalancerIPs"
-#    value = "10.206.101.10"
-#  }
-#
-#  dynamic "set" {
-#    for_each = local.pull_models
-#    content {
-#      name = "ollama.models.pull[${set.key}]"
-#      value = set.value
-#    }
-#  }
-#
-#  set{
-#    name = "resources.requests.memory"
-#    value = "4096Mi"
-#  }
-#
-#  set{
-#    name = "resources.limits.cpu"
-#    value = "2000m"
-#  }
-#}
+resource "helm_release" "ollama" {
+ repository = "https://otwld.github.io/ollama-helm"
+ chart = "ollama"
+ version = "1.19.0"
+ name = "ollama"
+ create_namespace = true
+ namespace = "ollama"
+ values = [<<-EOF
+persistentVolume:
+  enabled: true
+  size: 32Gi
+  storageClass: local-path
+
+service:
+  type: LoadBalancer
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 10.206.101.10
+
+resources:
+  requests:
+    memory: 4096Mi
+  limits:
+    cpu: 2000m
+  
+ollama:
+  gpu:
+    enabled: true
+    type: amd
+    number: 1
+
+# extraEnv:
+#   - name: HSA_OVERRIDE_GFX_VERSION
+#     value: "11.0.0"
+#   - name: HCC_AMDGPU_TARGET
+#     value: "gfx1101"
+#   - name: HIP_VISIBLE_DEVICES
+#     value: "0"
+#   - name: ROCR_VISIBLE_DEVICES
+#     value: "0"
+ EOF
+]
+
+ dynamic "set" {
+   for_each = local.pull_models
+   content {
+     name = "ollama.models.pull[${set.key}]"
+     value = set.value
+   }
+ }
+
+
+}
 
 resource "helm_release" "openwebui" {
   repository = "https://helm.openwebui.com/"
@@ -69,7 +70,7 @@ resource "helm_release" "openwebui" {
 
   set {
     name = "ollamaUrls[0]"
-    value = "http://10.206.2.8:11434"
+    value = "http://ollama.ollama.svc.cluster.local:11434"
   }
 
   set {
