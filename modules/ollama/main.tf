@@ -1,5 +1,5 @@
 locals {
- pull_models = []
+ pull_models = ["qwen3:8b", "gemma3:12b"]
 }
 
 resource "helm_release" "ollama" {
@@ -187,7 +187,7 @@ resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
 
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
-    "apiVersion" = "traefik.containo.us/v1alpha1"
+    "apiVersion" = "traefik.io/v1alpha1"
     "kind" = "IngressRoute"
     "metadata" = {
       "name" = "open-webui"
