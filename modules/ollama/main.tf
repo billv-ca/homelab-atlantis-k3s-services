@@ -45,6 +45,7 @@ ollama:
 
 }
 
+
 resource "helm_release" "openwebui" {
   repository = "https://helm.openwebui.com/"
   chart = "open-webui"
