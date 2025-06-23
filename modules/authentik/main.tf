@@ -401,6 +401,110 @@ resource "authentik_brand" "default" {
   flow_recovery = authentik_flow.reset.uuid
 }
 
+resource "authentik_flow" "passwordless" {
+  name = "passwordless-authentication"
+  title = "Login with Passkey"
+  slug = "passwordless-authentication"
+  designation = "authentication"
+}
+
+resource "authentik_stage_authenticator_validate" "passkey-login" {
+  name = "passkey-login"
+  not_configured_action = "deny"
+  webauthn_user_verification = "preferred"
+  device_classes = ["webauthn"]
+}
+
+resource "authentik_stage_user_login" "login" {
+  name = "user-login"
+}
+
+resource "authentik_flow_stage_binding" "passkey-login" {
+  target = authentik_flow.passwordless.uuid
+  stage  = authentik_stage_authenticator_validate.passkey-login.id
+  order  = 0
+}
+
+resource "authentik_flow_stage_binding" "user-login" {
+  target = authentik_flow.passwordless.uuid
+  stage  = authentik_stage_user_login.login.id
+  order  = 1
+}
+
+resource "authentik_stage_identification" "identification" {
+  name           = "identification"
+  user_fields    = ["username", "email"]
+  passwordless_flow = authentik_flow.passwordless.uuid
+  recovery_flow = authentik_flow.reset.uuid
+}
+
+resource "authentik_flow_stage_binding" "default-auth-identification" {
+  target = authentik_flow.default-authentication.uuid
+  stage  = authentik_stage_identification.identification.id
+  order  = 0
+}
+
+data "authentik_flow" "passchange" {
+  slug = "default-password-change"
+}
+
+resource "authentik_stage_password" "authentication-flow-password" {
+  name     = "password-stage"
+  configure_flow = data.authentik_flow.passchange.id
+  backends = ["authentik.core.auth.InbuiltBackend", "authentik.sources.kerberos.auth.KerberosBackend", "authentik.sources.ldap.auth.LDAPBackend", "authentik.core.auth.TokenBackend"]
+}
+
+resource "authentik_policy_expression" "authentication-flow-password-stage" {
+  name       = "authentication-flow-password-stage"
+  expression = <<-EOF
+flow_plan = request.context.get("flow_plan")
+if not flow_plan:
+    return True
+# If the user does not have a backend attached to it, they haven't
+# been authenticated yet and we need the password stage
+return not hasattr(flow_plan.context.get("pending_user"), "backend")
+EOF
+}
+
+resource "authentik_flow_stage_binding" "default-auth-password" {
+  target = authentik_flow.default-authentication.uuid
+  stage  = authentik_stage_password.authentication-flow-password.id
+  order  = 1
+}
+
+resource "authentik_policy_binding" "authentication-flow-password-stage" {
+  target = authentik_flow_stage_binding.default-auth-password.id
+  policy = authentik_policy_expression.authentication-flow-password-stage.id
+  order = 0
+}
+
+resource "authentik_stage_authenticator_validate" "mfa-validate" {
+  name                  = "authenticator-validate"
+  not_configured_action = "skip"
+  webauthn_user_verification = "preferred"
+  device_classes = ["static", "totp", "webauthn", "duo", "sms", "email"]
+}
+
+resource "authentik_flow_stage_binding" "default-auth-mfa" {
+  target = authentik_flow.default-authentication.uuid
+  stage  = authentik_stage_authenticator_validate.mfa-validate.id
+  order  = 3
+}
+
+resource "authentik_flow_stage_binding" "default-auth-login" {
+  target = authentik_flow.default-authentication.uuid
+  stage  = authentik_stage_user_login.login.id
+  order  = 4
+}
+
+resource "authentik_flow" "default-authentication" {
+  name        = "authentication"
+  title       = "Welcome, please log in to Authentik!"
+  slug        = "authentication"
+  designation = "authentication"
+}
+
+
 resource "authentik_flow" "reset" {
   name = "Default recovery flow"
   authentication = "require_unauthenticated"
