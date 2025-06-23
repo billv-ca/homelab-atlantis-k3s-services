@@ -15,6 +15,10 @@ data "authentik_flow" "default_authorization_flow" {
   slug = var.authorization_flow
 }
 
+data "authentik_flow" "default_authentication_flow" {
+  slug = var.authentication_flow
+}
+
 data "authentik_flow" "default_invalidation_flow" {
   slug = var.invalidation_flow
 }
@@ -36,6 +40,7 @@ resource "authentik_provider_proxy" "app" {
   external_host      = var.app_external_host
   refresh_token_validity = var.refresh_token_validity
   authorization_flow = data.authentik_flow.default_authorization_flow.id
+  authentication_flow = data.authentik_flow.default_authentication_flow.id
   invalidation_flow = data.authentik_flow.default_invalidation_flow.id
   property_mappings = concat(data.authentik_property_mapping_provider_scope.scope.ids, var.additional_property_mapping_ids)
 }

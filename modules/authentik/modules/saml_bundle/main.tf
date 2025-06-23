@@ -18,6 +18,10 @@ data "authentik_flow" "default_authorization_flow" {
   slug = var.authorization_flow
 }
 
+data "authentik_flow" "default_authentication_flow" {
+  slug = var.authentication_flow
+}
+
 data "authentik_flow" "default_invalidation_flow" {
   slug = var.invalidation_flow
 }
@@ -34,6 +38,7 @@ resource "authentik_provider_saml" "provider" {
     acs_url = var.acs_url
     name = var.app_name
     authorization_flow = data.authentik_flow.default_authorization_flow.id
+    authentication_flow = data.authentik_flow.default_authentication_flow.id
     invalidation_flow = data.authentik_flow.default_invalidation_flow.id
     sp_binding = var.sp_binding
     audience = var.audience

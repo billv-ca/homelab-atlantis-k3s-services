@@ -53,6 +53,12 @@ variable "authorization_flow" {
   description = "Name of the authorization flow to use for the provider. (Optional)"
 }
 
+variable "authentication_flow" {
+  type = string
+  default = "authentication"
+  description = "Name of the authentication flow to use for the provider. (Optional)"
+}
+
 variable "invalidation_flow" {
   type = string
   default = "default-invalidation-flow"

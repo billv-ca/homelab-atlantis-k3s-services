@@ -23,6 +23,10 @@ data "authentik_flow" "default_authorization_flow" {
   slug = var.authorization_flow
 }
 
+data "authentik_flow" "default_authentication_flow" {
+  slug = var.authentication_flow
+}
+
 data "authentik_flow" "default_invalidation_flow" {
   slug = var.invalidation_flow
 }
@@ -44,6 +48,7 @@ resource "random_password" "client_secret" {
 resource "authentik_provider_oauth2" "app" {
   name      = var.app_slug
   authorization_flow = data.authentik_flow.default_authorization_flow.id
+  authentication_flow = data.authentik_flow.default_authentication_flow.id
   invalidation_flow = data.authentik_flow.default_invalidation_flow.id
   client_id = coalesce(var.client_id, random_password.client_id.result)
   client_secret = coalesce(var.client_secret, random_password.client_secret.result)
