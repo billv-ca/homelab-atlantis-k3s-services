@@ -151,6 +151,22 @@ resource "kubernetes_stateful_set_v1" "mealie" {
             name = "SMTP_PASSWORD"
             value = data.aws_ssm_parameter.smtp.value
           }
+          env {
+            name = "OPENAI_API_KEY"
+            value = ""
+          }
+          env {
+            name = "OPENAI_BASE_URL"
+            value = "http://10.206.101.10:11434"
+          }
+          env {
+            name = "OPENAI_MODEL"
+            value = "qwen3:4b"
+          }
+          env {
+            name = "OPENAI_ENABLE_IMAGE_SERVICES"
+            value = "False"
+          }
         }
       }
     }
