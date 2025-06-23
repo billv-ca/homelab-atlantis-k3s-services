@@ -153,7 +153,7 @@ resource "kubernetes_stateful_set_v1" "mealie" {
           }
           env {
             name = "OPENAI_API_KEY"
-            value = ""
+            value = "none"
           }
           env {
             name = "OPENAI_BASE_URL"
