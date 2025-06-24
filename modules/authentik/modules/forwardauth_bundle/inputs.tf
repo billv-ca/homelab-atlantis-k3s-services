@@ -45,9 +45,9 @@ variable "additional_auth_response_headers" {
   description = "List of additional headers to forward on to the application you're proxying to. (Optional)"
 }
 
-variable "refresh_token_validity" {
+variable "access_token_validity" {
   type = string
-  default = "hours=1"
+  default = "minutes=10"
   description = "How long tokens will be valid for. (Optional)"
 }
 

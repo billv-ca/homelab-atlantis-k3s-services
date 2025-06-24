@@ -84,6 +84,7 @@ module "kube_dashboard" {
   app_namespace = "kubernetes-dashboard"
   additional_auth_response_headers = ["Authorization"]
   additional_property_mapping_ids = [authentik_property_mapping_provider_scope.kube_token.id]
+  access_token_validity = "hours=4"
 }
 
 module "proxmox" {
