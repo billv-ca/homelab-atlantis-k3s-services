@@ -38,7 +38,7 @@ resource "authentik_provider_proxy" "app" {
   mode               = var.app_mode
   cookie_domain      = var.app_cookie_domain
   external_host      = var.app_external_host
-  refresh_token_validity = var.refresh_token_validity
+  access_token_validity = var.access_token_validity
   authorization_flow = data.authentik_flow.default_authorization_flow.id
   authentication_flow = data.authentik_flow.default_authentication_flow.id
   invalidation_flow = data.authentik_flow.default_invalidation_flow.id
