@@ -157,7 +157,7 @@ resource "kubernetes_stateful_set_v1" "ocis" {
         }
         container {
           name = "ocis"
-          image = "owncloud/ocis:7.1"
+          image = "owncloud/ocis:7.2"
           command = ["/bin/bash", "-c", "ocis init || true; ocis server"]
           image_pull_policy = "Always"
           security_context {
