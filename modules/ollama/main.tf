@@ -1,7 +1,3 @@
-locals {
- pull_models = ["qwen3:8b", "gemma3:12b"]
-}
-
 resource "helm_release" "ollama" {
  repository = "https://otwld.github.io/ollama-helm"
  chart = "ollama"
@@ -33,16 +29,6 @@ ollama:
     number: 1
  EOF
 ]
-
- dynamic "set" {
-   for_each = local.pull_models
-   content {
-     name = "ollama.models.pull[${set.key}]"
-     value = set.value
-   }
- }
-
-
 }
 
 resource "helm_release" "openwebui" {
@@ -53,115 +39,95 @@ resource "helm_release" "openwebui" {
   create_namespace = true
   namespace = "open-webui"
 
-  set {
+  set = [{
     name = "ollama.enabled"
     value = false
-  }
-
-  set {
+  },
+  {
     name = "ollamaUrls[0]"
     value = "http://ollama.ollama.svc.cluster.local:11434"
-  }
-
-  set {
+  },
+  {
     name = "sso.oidc.clientId"
     value = var.OIDC_CLIENT_ID
-  }
-
-  set_sensitive {
-    name = "sso.oidc.clientSecret"
-    value = var.OIDC_CLIENT_SECRET
-  }
-
-  set {
+  },
+  {
     name = "sso.oidc.enabled"
     value = true
-  }
-
-  set {
+  },
+  {
     name = "sso.oidc.providerName"
     value = var.OIDC_PROVIDER_NAME
-  }
-
-  set {
+  },
+  {
     name = "sso.oidc.providerUrl"
     value = var.OIDC_CONFIGURATION_URL
-  }
-
-  set {
+  },
+  {
     name = "sso.roleManagement.adminRoles"
     value = var.OIDC_ADMIN_GROUP
-  }
-  
-  set {
+  },
+  {
     name = "sso.roleManagement.allowedRoles"
     value = var.OIDC_USER_GROUP
-  }
-
-  set {
+  },
+  {
     name = "sso.roleManagement.rolesClaim"
     value = "groups"
-  }
-
-  set {
+  },
+  {
     name = "sso.enabled"
     value = true
-  }
-
-  set {
+  },
+  {
     name = "sso.enableRoleManagement"
     value = true
-  }
-
-  set {
+  },
+  {
     name = "sso.enableSignup"
     value = true
-  }
-
-  set {
+  },
+  {
     name = "enableOpenaiApi"
     value = false
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[0].name"
     value = "ENABLE_LOGIN_FORM"
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[0].value"
     value = "\"false\""
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[1].name"
     value = "DEFAULT_USER_ROLE"
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[1].value"
     value = "user"
-  }
-  
-  set {
+  },
+  {
     name = "extraEnvVars[2].name"
     value = "ENABLE_PERSISTENT_CONFIG"
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[2].value"
     value = "\"false\""
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[3].name"
     value = "WEBUI_URL"
-  }
-
-  set {
+  },
+  {
     name = "extraEnvVars[3].value"
     value = "https://ollama.billv.ca"
-  }
+  }]
+
+  set_sensitive = [{
+    name = "sso.oidc.clientSecret"
+    value = var.OIDC_CLIENT_SECRET
+  }]
 }
 
 resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
