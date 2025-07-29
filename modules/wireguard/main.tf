@@ -75,7 +75,7 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
         }
         container {
           name = "wireguard"
-          image = "linuxserver/wireguard:1.0.20210914"
+          image = "linuxserver/wireguard:1.0.20250521"
           image_pull_policy = "Always"
           volume_mount {
             name = "wireguard-data"
