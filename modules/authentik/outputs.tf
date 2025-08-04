@@ -27,11 +27,11 @@ output "ocis_client_id" {
 }
 
 
-output "ollama_client_id" {
-  value = module.ollama.client_id
+output "open-webui_client_id" {
+  value = module.open-webui.client_id
 }
 
-output "ollama_client_secret" {
-  value = module.ollama.client_secret
+output "open-webui_client_secret" {
+  value = module.open-webui.client_secret
   sensitive = true
 }
