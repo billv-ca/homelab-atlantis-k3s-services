@@ -349,6 +349,21 @@ resource "authentik_user" "trina" {
             module.ocis-android.users_group_id]
 }
 
+resource "authentik_user" "deb" {
+  username = "deb"
+  name = "Deborah Roberts"
+  groups = [module.ocis.users_group_id,
+            module.ocis-desktop.users_group_id,
+            module.ocis-iOS.users_group_id,
+            module.ocis-android.users_group_id]
+}
+
+resource "authentik_user" "adam" {
+  username = "adam"
+  name = "Adam Halfpenny"
+  groups = [module.ollama.users_group_id]
+}
+
 resource "authentik_service_connection_kubernetes" "local" {
   name  = "local K3S"
   local = true
