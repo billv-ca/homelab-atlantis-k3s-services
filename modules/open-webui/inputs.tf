@@ -1,5 +1,5 @@
 variable "OIDC_CONFIGURATION_URL" {
-  default = "https://auth.billv.ca/application/o/ollama/.well-known/openid-configuration"
+  default = "https://auth.billv.ca/application/o/openwebui/.well-known/openid-configuration"
   type = string
 }
 
