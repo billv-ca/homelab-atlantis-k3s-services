@@ -129,16 +129,16 @@ module "mealie" {
 }
 
 
-module "ollama" {
+module "open-webui" {
   source = "./modules/oidc_bundle"
   signing_key = authentik_certificate_key_pair.cert_manager.id
-  app_name = "Ollama"
-  app_slug = "ollama"
-  app_icon = "https://www.ollama.com/public/assets/c889cc0d-cb83-4c46-a98e-0d0e273151b9/42f6b28d-9117-48cd-ac0d-44baaf5c178e.png"
-  app_launch_url = "https://ollama.billv.ca"
+  app_name = "Open WebUI"
+  app_slug = "openwebui"
+  app_icon = "https://raw.githubusercontent.com/open-webui/open-webui/refs/heads/main/static/favicon.png"
+  app_launch_url = "https://ai.billv.ca"
   allowed_redirect_uris = [{
       matching_mode = "regex",
-      url           = "https://ollama.billv.ca/.*",
+      url           = "https://ai.billv.ca/.*",
   }]
   access_token_validity = "hours=24"
 }
@@ -324,7 +324,7 @@ resource "authentik_user" "bill" {
             module.longhorn.access_group_id,
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
-            module.ollama.admins_group_id,
+            module.open-webui.admins_group_id,
             module.ocis.admins_group_id,
             module.ocis-desktop.admins_group_id,
             module.ocis-iOS.admins_group_id,
@@ -341,7 +341,7 @@ resource "authentik_user" "trina" {
   name = "Trina Vandenberk"
   password = sensitive(random_password.trina_pw.result)
   groups = [module.mealie.users_group_id,
-            module.ollama.users_group_id,
+            module.open-webui.users_group_id,
             authentik_group.zoho_users.id,
             module.ocis.users_group_id,
             module.ocis-desktop.users_group_id,
@@ -361,7 +361,7 @@ resource "authentik_user" "deb" {
 resource "authentik_user" "adam" {
   username = "adam"
   name = "Adam Halfpenny"
-  groups = [module.ollama.users_group_id]
+  groups = [module.open-webui.users_group_id]
 }
 
 resource "authentik_service_connection_kubernetes" "local" {

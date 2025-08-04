@@ -30,8 +30,12 @@ module "metallb" {
 
 module "ollama" {
   source = "./modules/ollama"
-  OIDC_CLIENT_ID = module.authentik.ollama_client_id
-  OIDC_CLIENT_SECRET = module.authentik.ollama_client_secret
+}
+
+module "open-webui" {
+  source = "./modules/open-webui"
+  OIDC_CLIENT_ID = module.authentik.open-webui_client_id
+  OIDC_CLIENT_SECRET = module.authentik.open-webui_client_secret
 }
 
 module "cert_manager" {
