@@ -18,12 +18,12 @@ variable "OIDC_PROVIDER_NAME" {
 }
 
 variable "OIDC_ADMIN_GROUP" {
-  default = "Ollama_Admins"
+  default = "Open WebUI_Admins"
   type = string
 }
 
 variable "OIDC_USER_GROUP" {
-  default = "Ollama_Users"
+  default = "Open WebUI_Users"
   type = string
 }
 
