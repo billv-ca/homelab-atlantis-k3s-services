@@ -79,7 +79,7 @@ module "kube_dashboard" {
   outpost_name = local.traefik_outpost_name
   app_name = "Kubernetes Dashboard"
   app_slug = "kube-dashboard"
-  app_icon = "https://static-00.iconduck.com/assets.00/kubernetes-icon-2048x1995-r1q3f8n7.png"
+  app_icon = "https://raw.githubusercontent.com/kubernetes/dashboard/refs/heads/master/modules/web/src/assets/images/kubernetes-logo.svg"
   app_external_host = "https://kube.billv.ca"
   app_namespace = "kubernetes-dashboard"
   additional_auth_response_headers = ["Authorization"]
@@ -280,7 +280,7 @@ module "longhorn" {
 
 module "wireguard" {
   source = "./modules/forwardauth_bundle"
-  app_icon = "https://static-00.iconduck.com/assets.00/wireguard-icon-1024x1024-78n6jncy.png"
+  app_icon = "https://www.wireguard.com//favicon.ico"
   app_name = "Wireguard"
   app_slug = "wireguard"
   app_external_host = "https://wireguard.billv.ca"
