@@ -1,14 +1,11 @@
 resource "helm_release" "ollama" {
  repository = "https://otwld.github.io/ollama-helm"
  chart = "ollama"
- version = "1.26.0"
+ version = "1.27.0"
  name = "ollama"
  create_namespace = true
  namespace = "ollama"
  values = [<<-EOF
-image:
-  tag: 0.11.4-rocm
-
 persistentVolume:
   enabled: true
   size: 32Gi
