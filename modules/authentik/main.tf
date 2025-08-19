@@ -148,7 +148,7 @@ module "ocis" {
   signing_key = authentik_certificate_key_pair.cert_manager.id
   app_name = "ocis"
   app_slug = "ocis"
-  app_icon = "https://static-00.iconduck.com/assets.00/owncloud-icon-2048x2048-uuor4edn.png"
+  app_icon = "https://github.com/owncloud/core/blob/master/core/img/favicon-touch.svg"
   app_launch_url = "https://ocis.billv.ca"
   client_type = "public"
   oauth_scopes = [
@@ -169,7 +169,6 @@ module "ocis-desktop" {
   signing_key = authentik_certificate_key_pair.cert_manager.id
   app_name = "ownCloud-Desktop-OIDC"
   app_slug = "ocis-desktop"
-  app_icon = "https://static-00.iconduck.com/assets.00/owncloud-icon-2048x2048-uuor4edn.png"
   app_launch_url = "blank://blank"
   client_id = "xdXOt13JKxym1B1QcEncf2XDkLAexMBFwiT9j6EfhhHFJhs2KM9jbjTmf8JBXE69"
   client_secret = "UBntmLjC2yYCeHwsyj73Uwo9TAaecAetRwMw0xYcvNL9yRdLSUi0hUAHfvCHFeFh"
@@ -195,7 +194,6 @@ module "ocis-iOS" {
   signing_key = authentik_certificate_key_pair.cert_manager.id
   app_name = "ownCloud-iOS-OIDC"
   app_slug = "ocis-ios"
-  app_icon = "https://static-00.iconduck.com/assets.00/owncloud-icon-2048x2048-uuor4edn.png"
   app_launch_url = "blank://blank"
   client_id = "mxd5OQDk6es5LzOzRvidJNfXLUZS2oN3oUFeXPP8LpPrhx3UroJFduGEYIBOxkY1"
   client_secret = "KFeFWWEZO9TkisIQzR3fo7hfiMXlOpaqP8CFuTbSHzV1TUuGECglPxpiVKJfOXIx"
@@ -221,7 +219,6 @@ module "ocis-android" {
   signing_key = authentik_certificate_key_pair.cert_manager.id
   app_name = "ownCloud-Android-OIDC"
   app_slug = "ocis-android"
-  app_icon = "https://static-00.iconduck.com/assets.00/owncloud-icon-2048x2048-uuor4edn.png"
   app_launch_url = "blank://blank"
   client_id = "e4rAsNUSIUs0lF4nbv9FmCeUkTlV9GdgTLDH1b5uie7syb90SzEVrbN7HIpmWJeD"
   client_secret = "dInFYGV33xKzhbRmpqQltYNdfLdJIfJ9L5ISoKhNoT9qZftpdWSP71VrpGR9pmoD"
