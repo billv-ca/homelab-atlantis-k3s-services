@@ -6,9 +6,6 @@ resource "helm_release" "ollama" {
  create_namespace = true
  namespace = "ollama"
  values = [<<-EOF
-image:
-  tag: 0.11.4-rocm
-
 persistentVolume:
   enabled: true
   size: 32Gi
