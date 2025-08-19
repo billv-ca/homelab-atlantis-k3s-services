@@ -148,7 +148,7 @@ module "ocis" {
   signing_key = authentik_certificate_key_pair.cert_manager.id
   app_name = "ocis"
   app_slug = "ocis"
-  app_icon = "https://github.com/owncloud/core/blob/master/core/img/favicon-touch.svg"
+  app_icon = "https://raw.githubusercontent.com/owncloud/core/refs/heads/master/core/img/favicon-touch.svg"
   app_launch_url = "https://ocis.billv.ca"
   client_type = "public"
   oauth_scopes = [
