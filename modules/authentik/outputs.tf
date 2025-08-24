@@ -35,3 +35,12 @@ output "open-webui_client_secret" {
   value = module.open-webui.client_secret
   sensitive = true
 }
+
+output "trilium_client_id" {
+  value = module.trilium.client_id
+}
+
+output "trilium_client_secret" {
+  value = module.trilium.client_secret
+  sensitive = true
+}

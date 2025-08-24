@@ -143,6 +143,21 @@ module "open-webui" {
   access_token_validity = "hours=24"
 }
 
+module "trilium" {
+  source = "./modules/oidc_bundle"
+  signing_key = authentik_certificate_key_pair.cert_manager.id
+  app_name = "trilium"
+  app_slug = "trilium"
+  app_icon = "https://github.com/TriliumNext/Trilium/blob/main/apps/client/src/assets/icon.png?raw=true"
+  app_launch_url = "https://notes.billv.ca"
+  client_type = "public"
+  allowed_redirect_uris = [{
+      matching_mode = "regex",
+      url           = "https://notes.billv.ca/.*",
+  }]
+  access_token_validity = "hours=24"
+}
+
 module "ocis" {
   source = "./modules/oidc_bundle"
   signing_key = authentik_certificate_key_pair.cert_manager.id
@@ -322,6 +337,7 @@ resource "authentik_user" "bill" {
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
             module.open-webui.admins_group_id,
+            module.trilium.admins_group_id,
             module.ocis.admins_group_id,
             module.ocis-desktop.admins_group_id,
             module.ocis-iOS.admins_group_id,
@@ -339,6 +355,7 @@ resource "authentik_user" "trina" {
   password = sensitive(random_password.trina_pw.result)
   groups = [module.mealie.users_group_id,
             module.open-webui.users_group_id,
+            module.trilium.users_group_id,
             authentik_group.zoho_users.id,
             module.ocis.users_group_id,
             module.ocis-desktop.users_group_id,

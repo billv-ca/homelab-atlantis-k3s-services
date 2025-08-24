@@ -32,6 +32,12 @@ module "ollama" {
   source = "./modules/ollama"
 }
 
+module "trilium" {
+  OIDC_CLIENT_ID = module.authentik.trilium_client_id
+  OIDC_CLIENT_SECRET = module.authentik.trilium_client_secret
+  source = "./modules/trilium"
+}
+
 module "open-webui" {
   source = "./modules/open-webui"
   OIDC_CLIENT_ID = module.authentik.open-webui_client_id
