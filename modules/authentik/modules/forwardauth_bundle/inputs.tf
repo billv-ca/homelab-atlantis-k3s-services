@@ -71,7 +71,7 @@ variable "authorization_flow" {
 
 variable "authentication_flow" {
   type = string
-  default = "authentication"
+  default = "default-authentication-flow"
   description = "Name of the authenticatoin flow to use for the provider. (Optional)"
 }
 

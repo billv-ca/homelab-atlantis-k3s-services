@@ -85,6 +85,7 @@ module "kube_dashboard" {
   additional_auth_response_headers = ["Authorization"]
   additional_property_mapping_ids = [authentik_property_mapping_provider_scope.kube_token.id]
   access_token_validity = "hours=4"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "proxmox" {
@@ -112,6 +113,7 @@ module "proxmox" {
       matching_mode = "regex",
       url           = "https://proxmox.billv.ca.*",
     }]
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "mealie" {
@@ -126,6 +128,7 @@ module "mealie" {
       url           = "https://mealie.billv.ca/.*",
   }]
   access_token_validity = "days=14"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 
@@ -141,6 +144,7 @@ module "open-webui" {
       url           = "https://ai.billv.ca/.*",
   }]
   access_token_validity = "hours=24"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "trilium" {
@@ -156,6 +160,7 @@ module "trilium" {
       url           = "https://notes.billv.ca/.*",
   }]
   access_token_validity = "hours=24"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "ocis" {
@@ -177,6 +182,7 @@ module "ocis" {
     url           = "https://ocis.billv.ca/.*",
   }]
   access_token_validity = "hours=4"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "ocis-desktop" {
@@ -202,6 +208,7 @@ module "ocis-desktop" {
     matching_mode = "regex",
     url           = "http://localhost(:.*)?",
   }]
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "ocis-iOS" {
@@ -227,6 +234,7 @@ module "ocis-iOS" {
     url           = "oc.ios://ios.owncloud.com",
   }]
   access_token_validity = "days=30"
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "ocis-android" {
@@ -247,6 +255,7 @@ module "ocis-android" {
     matching_mode = "strict",
     url           = "oc://android.owncloud.com",
   }]
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "pihole" {
@@ -257,6 +266,7 @@ module "pihole" {
   app_namespace = "pihole-system"
   app_icon = "https://upload.wikimedia.org/wikipedia/commons/0/00/Pi-hole_Logo.png?20180925041558"
   outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "atlantis" {
@@ -267,6 +277,7 @@ module "atlantis" {
   app_namespace = "atlantis-system"
   app_icon = "https://www.runatlantis.io/hero.png"
   outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
 }
 
 
@@ -278,6 +289,7 @@ module "meshcentral" {
   app_external_host = "https://meshcentral.billv.ca"
   app_namespace = "meshcentral"
   outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "longhorn" {
@@ -288,6 +300,7 @@ module "longhorn" {
   app_icon = "https://raw.githubusercontent.com/longhorn/website/refs/heads/master/static/img/logos/longhorn-icon-color.png"
   app_namespace = "longhorn-system"
   outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "wireguard" {
@@ -298,6 +311,7 @@ module "wireguard" {
   app_external_host = "https://wireguard.billv.ca"
   app_namespace = "wireguard"
   outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
 }
 
 module "zoho" {
@@ -318,6 +332,7 @@ module "zoho" {
     "goauthentik.io/providers/saml/username",
     "goauthentik.io/providers/saml/uid"
   ]
+  authentication_flow = authentik_flow.authentication.name
 }
 
 resource "authentik_user" "bill" {
@@ -469,7 +484,7 @@ resource "authentik_stage_identification" "identification" {
 }
 
 resource "authentik_flow_stage_binding" "default-auth-identification" {
-  target = authentik_flow.default-authentication.uuid
+  target = authentik_flow.authentication.uuid
   stage  = authentik_stage_identification.identification.id
   order  = 0
 }
@@ -497,7 +512,7 @@ EOF
 }
 
 resource "authentik_flow_stage_binding" "default-auth-password" {
-  target = authentik_flow.default-authentication.uuid
+  target = authentik_flow.authentication.uuid
   stage  = authentik_stage_password.authentication-flow-password.id
   order  = 1
 }
@@ -516,18 +531,18 @@ resource "authentik_stage_authenticator_validate" "mfa-validate" {
 }
 
 resource "authentik_flow_stage_binding" "default-auth-mfa" {
-  target = authentik_flow.default-authentication.uuid
+  target = authentik_flow.authentication.uuid
   stage  = authentik_stage_authenticator_validate.mfa-validate.id
   order  = 3
 }
 
 resource "authentik_flow_stage_binding" "default-auth-login" {
-  target = authentik_flow.default-authentication.uuid
+  target = authentik_flow.authentication.uuid
   stage  = authentik_stage_user_login.login.id
   order  = 4
 }
 
-resource "authentik_flow" "default-authentication" {
+resource "authentik_flow" "authentication" {
   name        = "authentication"
   title       = "Welcome, please log in to Authentik!"
   slug        = "authentication"
