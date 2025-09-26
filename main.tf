@@ -32,6 +32,10 @@ module "ollama" {
   source = "./modules/ollama"
 }
 
+module "octoeverywhere" {
+  source = "./modules/octoeverywhere"
+}
+
 module "trilium" {
   OIDC_CLIENT_ID = module.authentik.trilium_client_id
   OIDC_CLIENT_SECRET = module.authentik.trilium_client_secret
