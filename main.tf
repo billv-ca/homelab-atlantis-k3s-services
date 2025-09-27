@@ -36,6 +36,10 @@ module "octoeverywhere" {
   source = "./modules/octoeverywhere"
 }
 
+module "orca" {
+  source = "./modules/orca"
+}
+
 module "trilium" {
   OIDC_CLIENT_ID = module.authentik.trilium_client_id
   OIDC_CLIENT_SECRET = module.authentik.trilium_client_secret

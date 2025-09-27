@@ -269,6 +269,17 @@ module "pihole" {
   authentication_flow = authentik_flow.authentication.name
 }
 
+module "orca" {
+  source = "./modules/forwardauth_bundle"
+  app_name = "Orca Slicer"
+  app_slug = "orca"
+  app_external_host = "https://orca.billv.ca/"
+  app_namespace = "orca"
+  app_icon = "https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/orcaslicer-logo.png"
+  outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
+}
+
 module "atlantis" {
   source = "./modules/forwardauth_bundle"
   app_name = "Atlantis"
@@ -358,6 +369,7 @@ resource "authentik_user" "bill" {
             module.ocis-iOS.admins_group_id,
             module.ocis-android.admins_group_id,
             module.kube_dashboard.access_group_id,
+            module.orca.access_group_id,
             module.atlantis.access_group_id,
             module.meshcentral.access_group_id,
             authentik_group.zoho_users.id]
@@ -411,6 +423,7 @@ resource "kubernetes_manifest" "traefik-outpost-tls" {
         "pihole.billv.ca",
         "wireguard.billv.ca",
         "longhorn.billv.ca",
+        "orca.billv.ca",
         "kube.billv.ca.billv.ca",
         "atlantis.billv.ca"
       ]
@@ -429,6 +442,7 @@ resource "authentik_outpost" "traefik" {
     module.pihole.provider_id,
     module.wireguard.provider_id,
     module.kube_dashboard.provider_id,
+    module.orca.provider_id,
     module.longhorn.provider_id,
     module.atlantis.provider_id,
     module.meshcentral.provider_id
