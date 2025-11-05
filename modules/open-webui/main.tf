@@ -2,7 +2,7 @@ resource "helm_release" "openwebui" {
   repository = "https://helm.openwebui.com/"
   chart = "open-webui"
   name = "open-webui"
-  version = "8.12.2"
+  version = "8.12.3"
   create_namespace = true
   namespace = "open-webui"
 
