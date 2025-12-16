@@ -1,4 +1,4 @@
-resource "kubernetes_namespace" "namespace" {
+resource "kubernetes_namespace_v1" "namespace" {
   metadata {
     name = "trilium"
   }
@@ -7,7 +7,7 @@ resource "kubernetes_namespace" "namespace" {
 resource "kubernetes_persistent_volume_claim_v1" "pvc" {
   metadata {
     name = "trilium-pvc"
-    namespace = kubernetes_namespace.namespace.metadata.0.name
+    namespace = kubernetes_namespace_v1.namespace.metadata.0.name
   }
   spec {
     access_modes = ["ReadWriteOnce"]
@@ -26,7 +26,7 @@ resource "helm_release" "trilium" {
   name = "trilium"
   version = "1.3.0"
   create_namespace = true
-  namespace = kubernetes_namespace.namespace.metadata.0.name
+  namespace = kubernetes_namespace_v1.namespace.metadata.0.name
   set_sensitive = [ {
     name = "persistence.data.enabled"
     value = true
@@ -75,7 +75,7 @@ resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
     "kind" = "Certificate"
     "metadata" = {
       "name" = "notes-billv-ca"
-      "namespace" = kubernetes_namespace.namespace.metadata.0.name
+      "namespace" = kubernetes_namespace_v1.namespace.metadata.0.name
     }
     "spec" = {
       "dnsNames" = [
@@ -95,8 +95,8 @@ resource "kubernetes_manifest" "ingressroute" {
     "apiVersion" = "traefik.io/v1alpha1"
     "kind" = "IngressRoute"
     "metadata" = {
-      "name" = "trilliam"
-      "namespace" = kubernetes_namespace.namespace.metadata.0.name
+      "name" = "trilium"
+      "namespace" = kubernetes_namespace_v1.namespace.metadata.0.name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
