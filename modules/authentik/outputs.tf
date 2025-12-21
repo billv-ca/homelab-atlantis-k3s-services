@@ -44,3 +44,12 @@ output "trilium_client_secret" {
   value = module.trilium.client_secret
   sensitive = true
 }
+
+output "grafana_client_id" {
+  value = module.grafana.client_id
+}
+
+output "grafana_client_secret" {
+  value = module.grafana.client_secret
+  sensitive = true
+}
