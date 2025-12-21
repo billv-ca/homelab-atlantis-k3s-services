@@ -40,6 +40,12 @@ module "orca" {
   source = "./modules/orca"
 }
 
+module "community-prometheus" {
+  OIDC_CLIENT_ID = module.authentik.grafana_client_id
+  OIDC_CLIENT_SECRET = module.authentik.grafana_client_secret
+  source = "./modules/community-prometheus"
+}
+
 module "trilium" {
   OIDC_CLIENT_ID = module.authentik.trilium_client_id
   OIDC_CLIENT_SECRET = module.authentik.trilium_client_secret
