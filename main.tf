@@ -32,10 +32,6 @@ module "ollama" {
   source = "./modules/ollama"
 }
 
-module "octoeverywhere" {
-  source = "./modules/octoeverywhere"
-}
-
 module "orca" {
   source = "./modules/orca"
 }
