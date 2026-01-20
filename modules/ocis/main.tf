@@ -201,6 +201,15 @@ resource "kubernetes_stateful_set_v1" "ocis" {
             name = "OCIS_INSECURE"
             value = "false"
           }
+          /*
+            I don't integrate with LDAP but there's an internal cert that expires and causes manual maintenance.
+            You can just ignore this cert expiring with this environment variable. 
+            See: https://github.com/owncloud/ocis/issues/10350
+          */
+          env {
+            name = "OCIS_LDAP_INSECURE"
+            value = "true"
+          }
           env {
             name = "PROXY_AUTOPROVISION_ACCOUNTS"
             value = "true"
