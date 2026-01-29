@@ -74,20 +74,6 @@ return {
 EOF
 }
 
-module "kube_dashboard" {
-  source = "./modules/forwardauth_bundle"
-  outpost_name = local.traefik_outpost_name
-  app_name = "Kubernetes Dashboard"
-  app_slug = "kube-dashboard"
-  app_icon = "https://raw.githubusercontent.com/kubernetes/dashboard/refs/heads/master/modules/web/src/assets/images/kubernetes-logo.svg"
-  app_external_host = "https://kube.billv.ca"
-  app_namespace = "kubernetes-dashboard"
-  additional_auth_response_headers = ["Authorization"]
-  additional_property_mapping_ids = [authentik_property_mapping_provider_scope.kube_token.id]
-  access_token_validity = "hours=4"
-  authentication_flow = authentik_flow.authentication.name
-}
-
 module "proxmox" {
   source = "./modules/oidc_bundle"
   signing_key = authentik_certificate_key_pair.cert_manager.id
