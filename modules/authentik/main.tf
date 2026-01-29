@@ -23,13 +23,6 @@ data "kubernetes_secret_v1" "star_billv_ca" {
     }
 }
 
-data "kubernetes_secret_v1" "bill_token" {
-    metadata {
-        name = "bill-token"
-        namespace = "default"
-    }
-}
-
 resource "authentik_certificate_key_pair" "cert_manager" {
   name             = "star-billv-ca"
   certificate_data = data.kubernetes_secret_v1.star_billv_ca.data["tls.crt"]
@@ -56,22 +49,6 @@ resource "random_password" "trina_pw" {
 
 module "aws" {
   source = "./aws"
-}
-
-resource "authentik_property_mapping_provider_scope" "kube_token" {
-  name       = "kubetoken"
-  scope_name = "kubetoken"
-  expression = <<EOF
-return {
-    "ak_proxy": {
-        "user_attributes": {
-            "additionalHeaders": {
-                "Authorization": "Bearer " + request.user.attributes.get("kube_token", "")
-            }
-        }
-    }
-}
-EOF
 }
 
 module "proxmox" {
@@ -350,9 +327,6 @@ resource "authentik_user" "bill" {
   username = "bill"
   email = "bill@vandenberk.me"
   name = "Bill Vandenberk"
-  attributes = jsonencode({
-    kube_token = sensitive(data.kubernetes_secret_v1.bill_token.data["token"])
-  })
   password = sensitive(random_password.bill_pw.result)
   groups = [data.authentik_group.admins.id,
             module.aws.admins_group_id,
@@ -369,7 +343,6 @@ resource "authentik_user" "bill" {
             module.ocis-desktop.admins_group_id,
             module.ocis-iOS.admins_group_id,
             module.ocis-android.admins_group_id,
-            module.kube_dashboard.access_group_id,
             module.orca.access_group_id,
             module.atlantis.access_group_id,
             module.meshcentral.access_group_id,
@@ -442,7 +415,6 @@ resource "authentik_outpost" "traefik" {
   protocol_providers = [
     module.pihole.provider_id,
     module.wireguard.provider_id,
-    module.kube_dashboard.provider_id,
     module.orca.provider_id,
     module.longhorn.provider_id,
     module.atlantis.provider_id,
