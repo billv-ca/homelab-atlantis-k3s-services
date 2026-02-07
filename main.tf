@@ -28,8 +28,12 @@ module "metallb" {
   source = "./modules/metallb"
 }
 
-module "ollama" {
-  source = "./modules/ollama"
+# module "ollama" {
+#   source = "./modules/ollama"
+# }
+
+module "transformerlab" {
+  source = "./modules/transformerlab"
 }
 
 module "orca" {
