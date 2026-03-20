@@ -28,6 +28,10 @@ module "metallb" {
   source = "./modules/metallb"
 }
 
+module "headlamp" {
+  source = "./modules/headlamp"
+}
+
 module "ollama" {
   source = "./modules/ollama"
 }
