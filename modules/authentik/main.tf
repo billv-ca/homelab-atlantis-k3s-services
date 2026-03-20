@@ -23,6 +23,13 @@ data "kubernetes_secret_v1" "star_billv_ca" {
     }
 }
 
+data "kubernetes_secret_v1" "bill_token" {
+    metadata {
+        name = "bill-token"
+        namespace = "default"
+    }
+}
+
 resource "authentik_certificate_key_pair" "cert_manager" {
   name             = "star-billv-ca"
   certificate_data = data.kubernetes_secret_v1.star_billv_ca.data["tls.crt"]
@@ -94,19 +101,34 @@ module "mealie" {
   authentication_flow = authentik_flow.authentication.name
 }
 
+resource "authentik_property_mapping_provider_scope" "kube_token" {
+  name       = "kubetoken"
+  scope_name = "kubetoken"
+  expression = <<EOF
+return {
+    "ak_proxy": {
+        "user_attributes": {
+            "additionalHeaders": {
+                "Authorization": "Bearer " + request.user.attributes.get("kube_token", "")
+            }
+        }
+    }
+}
+EOF
+}
+
 module "headlamp" {
-  source = "./modules/oidc_bundle"
-  signing_key = authentik_certificate_key_pair.cert_manager.id
+  source = "./modules/forwardauth_bundle"
   app_name = "Headlamp"
   app_slug = "headlamp"
+  app_external_host = "https://kube.billv.ca/"
+  app_namespace = "headlamp"
   app_icon = "https://raw.githubusercontent.com/kubernetes-sigs/headlamp/refs/heads/main/frontend/src/resources/icon-dark.svg"
-  app_launch_url = "https://kube.billv.ca"
-  allowed_redirect_uris = [{
-      matching_mode = "regex",
-      url           = "https://kube.billv.ca/.*",
-  }]
-  access_token_validity = "days=14"
+  outpost_name = local.traefik_outpost_name
   authentication_flow = authentik_flow.authentication.name
+  additional_auth_response_headers = ["Authorization"]
+  additional_property_mapping_ids = [authentik_property_mapping_provider_scope.kube_token.id]
+  access_token_validity = "hours=4"
 }
 
 module "grafana" {
@@ -342,6 +364,9 @@ resource "authentik_user" "bill" {
   username = "bill"
   email = "bill@vandenberk.me"
   name = "Bill Vandenberk"
+  attributes = jsonencode({
+    kube_token = sensitive(data.kubernetes_secret_v1.bill_token.data["token"])
+  })
   password = sensitive(random_password.bill_pw.result)
   groups = [data.authentik_group.admins.id,
             module.aws.admins_group_id,
@@ -351,7 +376,7 @@ resource "authentik_user" "bill" {
             module.longhorn.access_group_id,
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
-            module.headlamp.admins_group_id,
+            module.headlamp.access_group_id,
             module.open-webui.admins_group_id,
             module.grafana.admins_group_id,
             module.trilium.admins_group_id,
@@ -414,8 +439,8 @@ resource "kubernetes_manifest" "traefik-outpost-tls" {
         "wireguard.billv.ca",
         "longhorn.billv.ca",
         "orca.billv.ca",
-        "kube.billv.ca.billv.ca",
-        "atlantis.billv.ca"
+        "kube.billv.ca",
+        "atlantis.billv.ca",
       ]
       "issuerRef" = {
         "kind" = "ClusterIssuer"
@@ -434,7 +459,8 @@ resource "authentik_outpost" "traefik" {
     module.orca.provider_id,
     module.longhorn.provider_id,
     module.atlantis.provider_id,
-    module.meshcentral.provider_id
+    module.meshcentral.provider_id,
+    module.headlamp.provider_id
   ]
   service_connection = authentik_service_connection_kubernetes.local.id
 }

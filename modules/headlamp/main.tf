@@ -5,21 +5,6 @@ resource "helm_release" "headlamp" {
  name = "headlamp"
  create_namespace = true
  namespace = "headlamp"
- set_sensitive = [{
-  name = "config.oidc.clientSecret"
-  value = var.OIDC_CLIENT_SECRET
- }]
- values = [<<-EOF
-service:
-  type: LoadBalancer
-  annotations:
-    metallb.universe.tf/loadBalancerIPs: 10.206.101.11
-config:
-  oidc:
-    clientID: ${var.OIDC_CLIENT_ID}
-    issuerURL: ${var.OIDC_CONFIGURATION_URL}
- EOF
-]
 }
 
 resource "kubernetes_manifest" "certificate_kube_billv_ca" {
@@ -58,6 +43,10 @@ resource "kubernetes_manifest" "ingressroute" {
       "routes" = [{
         "kind" = "Rule"
         "match" = "Host(`kube.billv.ca`)"
+        "middlewares" = [{
+          "name" = "authentik"
+          "namespace" = "headlamp"
+        }]
         "services" = [{
           "kind" = "Service"
           "name" = "headlamp"
