@@ -94,6 +94,21 @@ module "mealie" {
   authentication_flow = authentik_flow.authentication.name
 }
 
+module "headlamp" {
+  source = "./modules/oidc_bundle"
+  signing_key = authentik_certificate_key_pair.cert_manager.id
+  app_name = "Headlamp"
+  app_slug = "headlamp"
+  app_icon = "https://raw.githubusercontent.com/kubernetes-sigs/headlamp/refs/heads/main/frontend/src/resources/icon-dark.svg"
+  app_launch_url = "https://kube.billv.ca"
+  allowed_redirect_uris = [{
+      matching_mode = "regex",
+      url           = "https://kube.billv.ca/.*",
+  }]
+  access_token_validity = "days=14"
+  authentication_flow = authentik_flow.authentication.name
+}
+
 module "grafana" {
   source = "./modules/oidc_bundle"
   signing_key = authentik_certificate_key_pair.cert_manager.id
@@ -336,6 +351,7 @@ resource "authentik_user" "bill" {
             module.longhorn.access_group_id,
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
+            module.headlamp.admins_group_id,
             module.open-webui.admins_group_id,
             module.grafana.admins_group_id,
             module.trilium.admins_group_id,

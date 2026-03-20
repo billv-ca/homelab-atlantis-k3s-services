@@ -22,6 +22,15 @@ output "mealie_client_secret" {
   sensitive = true
 }
 
+output "headlamp_client_id" {
+  value = module.headlamp.client_id
+}
+
+output "headlamp_client_secret" {
+  value = module.headlamp.client_secret
+  sensitive = true
+}
+
 output "ocis_client_id" {
   value = module.ocis.client_id
 }

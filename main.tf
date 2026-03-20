@@ -28,6 +28,12 @@ module "metallb" {
   source = "./modules/metallb"
 }
 
+module "headlamp" {
+  source = "./modules/headlamp"
+  OIDC_CLIENT_ID = module.authentik.headlamp_client_id
+  OIDC_CLIENT_SECRET = module.authentik.headlamp_client_secret
+}
+
 module "ollama" {
   source = "./modules/ollama"
 }
