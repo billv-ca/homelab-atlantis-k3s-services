@@ -39,7 +39,7 @@ resource "kubernetes_manifest" "bgpadvertisment" {
       "namespace" = "metallb-system"
     }
     "spec" = {
-      "aggregatoinLength" = 32
+      "aggregationLength" = 32
       "ipAddressPools" = [
         "first-pool"
       ]
