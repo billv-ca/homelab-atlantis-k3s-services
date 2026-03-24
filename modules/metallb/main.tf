@@ -35,7 +35,7 @@ resource "kubernetes_manifest" "bgpadvertisement" {
     "apiVersion" = "metallb.io/v1beta1"
     "kind" = "BGPAdvertisement"
     "metadata" = {
-      "name" = "bgppeer-advertisment"
+      "name" = "bgp-advertisment"
       "namespace" = "metallb-system"
     }
     "spec" = {
