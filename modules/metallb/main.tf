@@ -30,7 +30,7 @@ resource "kubernetes_manifest" "bgppeer" {
   }
 }
 
-resource "kubernetes_manifest" "bgpadvertisment" {
+resource "kubernetes_manifest" "bgpadvertisement" {
   manifest = {
     "apiVersion" = "metallb.io/v1beta1"
     "kind" = "BGPAdvertisement"
