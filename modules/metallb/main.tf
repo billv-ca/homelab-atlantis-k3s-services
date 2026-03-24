@@ -14,13 +14,36 @@ resource "kubernetes_manifest" "ipaddresspool_metallb_system_first_pool" {
   }
 }
 
-resource "kubernetes_manifest" "l2advertisement_metallb_system_default" {
+resource "kubernetes_manifest" "bgppeer" {
   manifest = {
     "apiVersion" = "metallb.io/v1beta1"
-    "kind" = "L2Advertisement"
+    "kind" = "BGPPeer"
     "metadata" = {
-      "name" = "default"
+      "name" = "bgppeer-10.206.0.1"
       "namespace" = "metallb-system"
+    }
+    "spec" = {
+      "myASN" = 64500
+      "peerASN" = 64499
+      "peerAddress" = "10.206.0.1"
+    }
+  }
+}
+
+resource "kubernetes_manifest" "bgpadvertisement" {
+  manifest = {
+    "apiVersion" = "metallb.io/v1beta1"
+    "kind" = "BGPAdvertisement"
+    "metadata" = {
+      "name" = "bgp-advertisement"
+      "namespace" = "metallb-system"
+    }
+    "spec" = {
+      "aggregationLength" = 32
+      "ipAddressPools" = [
+        "first-pool"
+      ]
+      "localPref" = 100
     }
   }
 }
