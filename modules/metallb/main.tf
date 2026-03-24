@@ -33,7 +33,7 @@ resource "kubernetes_manifest" "bgppeer" {
 resource "kubernetes_manifest" "bgpadvertisment" {
   manifest = {
     "apiVersion" = "metallb.io/v1beta1"
-    "kind" = "BGPAdvertisment"
+    "kind" = "BGPAdvertisement"
     "metadata" = {
       "name" = "bgppeer-advertisment"
       "namespace" = "metallb-system"
