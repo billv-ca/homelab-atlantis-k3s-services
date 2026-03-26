@@ -346,7 +346,6 @@ module "zoho" {
   app_slug = "zoho"
   audience = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"
   acs_url = "https://accounts.zoho.com/signin/samlsp/50808682"
-  app_launch_url = "https://accounts.zohocloud.ca/signin"
   app_icon = "https://www.zohowebstatic.com/sites/zweb/images/commonroot/zoho-logo.svg"
   property_mappings = [
     "goauthentik.io/providers/saml/email",
