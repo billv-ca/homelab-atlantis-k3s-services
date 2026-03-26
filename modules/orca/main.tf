@@ -6,7 +6,7 @@ resource "kubernetes_namespace_v1" "namespace" {
 
 resource "kubernetes_stateful_set_v1" "orca" {
   metadata {
-    name = "orca"
+    name      = "orca"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
   }
   spec {
@@ -17,61 +17,61 @@ resource "kubernetes_stateful_set_v1" "orca" {
       }
     }
     volume_claim_template {
-        metadata {
-            name = "config"
+      metadata {
+        name = "config"
+      }
+      spec {
+        resources {
+          requests = {
+            storage = "5Gi"
+          }
         }
-        spec {
-            resources {
-              requests = {
-                storage = "5Gi"
-              }
-            }
-            storage_class_name = "longhorn"
-            access_modes = ["ReadWriteOnce"]
-        }
+        storage_class_name = "longhorn"
+        access_modes       = ["ReadWriteOnce"]
+      }
     }
     template {
-        metadata {
-            labels = {
-                app = "orca"
-            }
+      metadata {
+        labels = {
+          app = "orca"
         }
-        spec {
-            container {
-                name = "orca"
-                image = "linuxserver/orcaslicer:2.3.2"
+      }
+      spec {
+        container {
+          name  = "orca"
+          image = "linuxserver/orcaslicer:2.3.2"
 
-                port {
-                  container_port = 3000
-                  protocol = "TCP"
-                  name = "http"
-                }
+          port {
+            container_port = 3000
+            protocol       = "TCP"
+            name           = "http"
+          }
 
-                volume_mount {
-                  mount_path = "/config"
-                  name = "config"
-                }
-            }
+          volume_mount {
+            mount_path = "/config"
+            name       = "config"
+          }
         }
+      }
     }
   }
 }
 
 resource "kubernetes_service_v1" "orca" {
   metadata {
-    name = "orca"
-    namespace = kubernetes_namespace_v1.namespace.metadata.0.name
+    name      = "orca"
+    namespace = kubernetes_namespace_v1.namespace.metadata[0].name
   }
   spec {
     type = "ClusterIP"
     selector = {
-        "app" = "orca"
+      "app" = "orca"
     }
     port {
-      name = "http"
-      port = 3000
+      name        = "http"
+      port        = 3000
       target_port = 3000
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -79,10 +79,10 @@ resource "kubernetes_service_v1" "orca" {
 resource "kubernetes_manifest" "certificate_orca_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
-    "kind" = "Certificate"
+    "kind"       = "Certificate"
     "metadata" = {
-      "name" = "orca-billv-ca"
-      "namespace" = kubernetes_namespace_v1.namespace.metadata.0.name
+      "name"      = "orca-billv-ca"
+      "namespace" = kubernetes_namespace_v1.namespace.metadata[0].name
     }
     "spec" = {
       "dnsNames" = [
@@ -100,24 +100,24 @@ resource "kubernetes_manifest" "certificate_orca_billv_ca" {
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "IngressRoute"
+    "kind"       = "IngressRoute"
     "metadata" = {
-      "name" = "orca"
-      "namespace" = kubernetes_namespace_v1.namespace.metadata.0.name
+      "name"      = "orca"
+      "namespace" = kubernetes_namespace_v1.namespace.metadata[0].name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
       "routes" = [{
-        "kind" = "Rule"
+        "kind"  = "Rule"
         "match" = "Host(`orca.billv.ca`)"
         "middlewares" = [{
-          "name" = "authentik"
-          "namespace" = kubernetes_namespace_v1.namespace.metadata.0.name
+          "name"      = "authentik"
+          "namespace" = kubernetes_namespace_v1.namespace.metadata[0].name
         }]
         "services" = [{
-          "kind" = "Service"
-          "name" = "orca"
-          "port" = 3000
+          "kind"   = "Service"
+          "name"   = "orca"
+          "port"   = 3000
           "scheme" = "http"
         }]
       }]
