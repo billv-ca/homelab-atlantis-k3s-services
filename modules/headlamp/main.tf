@@ -1,7 +1,7 @@
 resource "helm_release" "headlamp" {
  repository = "https://kubernetes-sigs.github.io/headlamp/"
  chart = "headlamp"
- version = "0.40.0"
+ version = "0.41.0"
  name = "headlamp"
  create_namespace = true
  namespace = "headlamp"
