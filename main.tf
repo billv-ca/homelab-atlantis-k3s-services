@@ -41,6 +41,10 @@ module "orca" {
   source = "./modules/orca"
 }
 
+module "crafty-controller" {
+  source = "./modules/crafty-controller"
+}
+
 module "community-prometheus" {
   OIDC_CLIENT_ID = module.authentik.grafana_client_id
   OIDC_CLIENT_SECRET = module.authentik.grafana_client_secret
