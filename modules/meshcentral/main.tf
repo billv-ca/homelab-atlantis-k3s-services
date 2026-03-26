@@ -1,10 +1,10 @@
 terraform {
   required_providers {
     kubernetes = {
-        source = "hashicorp/kubernetes"
+      source = "hashicorp/kubernetes"
     }
     helm = {
-        source = "hashicorp/helm"
+      source = "hashicorp/helm"
     }
     aws = {
       source = "hashicorp/aws"
@@ -20,16 +20,16 @@ resource "kubernetes_namespace_v1" "meshcentral" {
 
 resource "kubernetes_stateful_set_v1" "meshcentral" {
   metadata {
-      name = "meshcentral"
-      namespace = kubernetes_namespace_v1.meshcentral.metadata.0.name
+    name      = "meshcentral"
+    namespace = kubernetes_namespace_v1.meshcentral.metadata[0].name
   }
   spec {
     volume_claim_template {
       metadata {
-          name = "meshcentral-data"
+        name = "meshcentral-data"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -40,10 +40,10 @@ resource "kubernetes_stateful_set_v1" "meshcentral" {
     }
     volume_claim_template {
       metadata {
-          name = "meshcentral-files"
+        name = "meshcentral-files"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -60,36 +60,36 @@ resource "kubernetes_stateful_set_v1" "meshcentral" {
     service_name = "meshcentral"
     template {
       metadata {
-        name = "meshcentral"
-        namespace = kubernetes_namespace_v1.meshcentral.metadata.0.name
+        name      = "meshcentral"
+        namespace = kubernetes_namespace_v1.meshcentral.metadata[0].name
         labels = {
           app = "meshcentral"
         }
       }
       spec {
         container {
-          name = "meshcentral"
-          image = "typhonragewind/meshcentral:1.1.53"
+          name              = "meshcentral"
+          image             = "typhonragewind/meshcentral:1.1.53"
           image_pull_policy = "Always"
           volume_mount {
-            name = "meshcentral-data"
+            name       = "meshcentral-data"
             mount_path = "/opt/meshcentral/meshcentral-files"
           }
           volume_mount {
-            name = "meshcentral-files"
+            name       = "meshcentral-files"
             mount_path = "/opt/meshcentral/meshcentral-data"
           }
           port {
             container_port = 443
-            name = "http"
-            protocol = "TCP"
+            name           = "http"
+            protocol       = "TCP"
           }
           env {
-            name = "HOSTNAME"
+            name  = "HOSTNAME"
             value = "meshcentral.billv.ca"
           }
           env {
-            name = "ALLOW_NEW_ACCOUNTS"
+            name  = "ALLOW_NEW_ACCOUNTS"
             value = "true"
           }
         }
@@ -100,19 +100,19 @@ resource "kubernetes_stateful_set_v1" "meshcentral" {
 
 resource "kubernetes_service_v1" "meshcentral" {
   metadata {
-    name = "meshcentral"
-    namespace = kubernetes_namespace_v1.meshcentral.metadata.0.name
+    name      = "meshcentral"
+    namespace = kubernetes_namespace_v1.meshcentral.metadata[0].name
   }
   spec {
     type = "ClusterIP"
     selector = {
-        "app" = "meshcentral"
+      "app" = "meshcentral"
     }
     port {
-      name = "http"
-      port = 443
+      name        = "http"
+      port        = 443
       target_port = 443
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -120,10 +120,10 @@ resource "kubernetes_service_v1" "meshcentral" {
 resource "kubernetes_manifest" "certificate_meshcentral_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
-    "kind" = "Certificate"
+    "kind"       = "Certificate"
     "metadata" = {
-      "name" = "meshcentral-billv-ca"
-      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+      "name"      = "meshcentral-billv-ca"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata[0].name
     }
     "spec" = {
       "dnsNames" = [
@@ -141,26 +141,26 @@ resource "kubernetes_manifest" "certificate_meshcentral_billv_ca" {
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "IngressRoute"
+    "kind"       = "IngressRoute"
     "metadata" = {
-      "name" = "meshcentral"
-      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+      "name"      = "meshcentral"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata[0].name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
       "routes" = [{
-        "kind" = "Rule"
+        "kind"  = "Rule"
         "match" = "Host(`meshcentral.billv.ca`)"
         "middlewares" = [{
-          "name" = "authentik"
-          "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+          "name"      = "authentik"
+          "namespace" = kubernetes_namespace_v1.meshcentral.metadata[0].name
         }]
         "services" = [{
-          "kind" = "Service"
-          "name" = "meshcentral"
-          "port" = 443
+          "kind"             = "Service"
+          "name"             = "meshcentral"
+          "port"             = 443
           "serversTransport" = "meshcentral"
-          "scheme" = "https"
+          "scheme"           = "https"
         }]
       }]
       "tls" = {
@@ -173,13 +173,13 @@ resource "kubernetes_manifest" "ingressroute" {
 resource "kubernetes_manifest" "servers_transport" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "ServersTransport"
+    "kind"       = "ServersTransport"
     "metadata" = {
-      "name" = "meshcentral"
-      "namespace" = kubernetes_namespace_v1.meshcentral.metadata.0.name
+      "name"      = "meshcentral"
+      "namespace" = kubernetes_namespace_v1.meshcentral.metadata[0].name
     }
     "spec" = {
-      "serverName" = "meshcentral.${kubernetes_namespace_v1.meshcentral.metadata.0.name}.svc.cluster.local"
+      "serverName"         = "meshcentral.${kubernetes_namespace_v1.meshcentral.metadata[0].name}.svc.cluster.local"
       "insecureSkipVerify" = "true"
     }
   }

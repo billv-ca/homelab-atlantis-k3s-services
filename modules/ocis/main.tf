@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     kubernetes = {
-        source = "hashicorp/kubernetes"
+      source = "hashicorp/kubernetes"
     }
   }
 }
@@ -14,8 +14,8 @@ resource "kubernetes_namespace_v1" "ocis" {
 
 resource "kubernetes_config_map_v1" "config" {
   metadata {
-    name = "ocis-config"
-    namespace = kubernetes_namespace_v1.ocis.metadata.0.name
+    name      = "ocis-config"
+    namespace = kubernetes_namespace_v1.ocis.metadata[0].name
   }
   data = {
     "proxy.yaml" = <<EOF
@@ -36,7 +36,7 @@ role_quotas:
   71881883-1768-46bd-a24d-a356a2afdf7f: 10000000000
   d7beeea8-8ff4-406b-8fb6-ab2dd81e6b11: 5000000000
 EOF
-    "csp.yaml" = <<EOF
+    "csp.yaml"   = <<EOF
 directives:
   child-src:
     - '''self'''
@@ -80,16 +80,16 @@ EOF
 
 resource "kubernetes_stateful_set_v1" "ocis" {
   metadata {
-      name = "ocis"
-      namespace = kubernetes_namespace_v1.ocis.metadata.0.name
+    name      = "ocis"
+    namespace = kubernetes_namespace_v1.ocis.metadata[0].name
   }
   spec {
     volume_claim_template {
       metadata {
-          name = "ocis-data"
+        name = "ocis-data"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -100,10 +100,10 @@ resource "kubernetes_stateful_set_v1" "ocis" {
     }
     volume_claim_template {
       metadata {
-          name = "ocis-config"
+        name = "ocis-config"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -120,85 +120,85 @@ resource "kubernetes_stateful_set_v1" "ocis" {
     service_name = "ocis"
     template {
       metadata {
-        name = "ocis"
-        namespace = kubernetes_namespace_v1.ocis.metadata.0.name
+        name      = "ocis"
+        namespace = kubernetes_namespace_v1.ocis.metadata[0].name
         labels = {
           app = "ocis"
         }
       }
       spec {
         init_container {
-          name = "init-chown"
-          command = ["/bin/sh", "-c", "if [ ! -f \"/etc/ocis/proxy.yaml\" ]; then cp /etc/ocis-config/proxy.yaml /etc/ocis/proxy.yaml && chown -R 1000:1000 /etc/ocis && chown -R 1000:1000 /var/lib/ocis; fi"]
-          image = "busybox:stable"
+          name              = "init-chown"
+          command           = ["/bin/sh", "-c", "if [ ! -f \"/etc/ocis/proxy.yaml\" ]; then cp /etc/ocis-config/proxy.yaml /etc/ocis/proxy.yaml && chown -R 1000:1000 /etc/ocis && chown -R 1000:1000 /var/lib/ocis; fi"]
+          image             = "busybox:stable"
           image_pull_policy = "IfNotPresent"
           security_context {
             run_as_non_root = false
-            run_as_user = 0
+            run_as_user     = 0
           }
           volume_mount {
-            name = "ocis-data"
+            name       = "ocis-data"
             mount_path = "/var/lib/ocis"
           }
           volume_mount {
-            name = "ocis-config"
+            name       = "ocis-config"
             mount_path = "/etc/ocis"
           }
           volume_mount {
-            name = "ocis-configmap"
+            name       = "ocis-configmap"
             mount_path = "/etc/ocis-config"
           }
         }
         volume {
           name = "ocis-configmap"
           config_map {
-            name = kubernetes_config_map_v1.config.metadata.0.name
+            name = kubernetes_config_map_v1.config.metadata[0].name
           }
         }
         container {
-          name = "ocis"
-          image = "owncloud/ocis:8.0"
-          command = ["/bin/bash", "-c", "ocis init || true; ocis server"]
+          name              = "ocis"
+          image             = "owncloud/ocis:8.0"
+          command           = ["/bin/bash", "-c", "ocis init || true; ocis server"]
           image_pull_policy = "Always"
           security_context {
-            run_as_group = 1000
-            run_as_user = 1000
+            run_as_group    = 1000
+            run_as_user     = 1000
             run_as_non_root = true
           }
           volume_mount {
-            name = "ocis-data"
+            name       = "ocis-data"
             mount_path = "/var/lib/ocis"
           }
           volume_mount {
-            name = "ocis-config"
+            name       = "ocis-config"
             mount_path = "/etc/ocis"
           }
           volume_mount {
-            name = "ocis-configmap"
+            name       = "ocis-configmap"
             mount_path = "/etc/ocis-config"
           }
           port {
             container_port = 9200
-            protocol = "TCP"
+            protocol       = "TCP"
           }
           env {
-            name = "OCIS_URL"
+            name  = "OCIS_URL"
             value = "https://ocis.billv.ca"
           }
           env {
-            name = "OCIS_LOG_LEVEL"
+            name  = "OCIS_LOG_LEVEL"
             value = "error"
           }
           env {
-            name = "OCIS_LOG_COLOR"
+            name  = "OCIS_LOG_COLOR"
             value = "false"
           }
           env {
-            name = "PROXY_TLS"
+            name  = "PROXY_TLS"
             value = "false"
           }
           env {
-            name = "OCIS_INSECURE"
+            name  = "OCIS_INSECURE"
             value = "false"
           }
           /*
@@ -207,51 +207,51 @@ resource "kubernetes_stateful_set_v1" "ocis" {
             See: https://github.com/owncloud/ocis/issues/10350
           */
           env {
-            name = "OCIS_LDAP_INSECURE"
+            name  = "OCIS_LDAP_INSECURE"
             value = "true"
           }
           env {
-            name = "PROXY_AUTOPROVISION_ACCOUNTS"
+            name  = "PROXY_AUTOPROVISION_ACCOUNTS"
             value = "true"
           }
           env {
-            name = "PROXY_ROLE_ASSIGNMENT_DRIVER"
+            name  = "PROXY_ROLE_ASSIGNMENT_DRIVER"
             value = "oidc"
           }
           env {
-            name = "OCIS_OIDC_ISSUER"
+            name  = "OCIS_OIDC_ISSUER"
             value = var.oidc_url
           }
           env {
-            name = "PROXY_OIDC_REWRITE_WELLKNOWN"
+            name  = "PROXY_OIDC_REWRITE_WELLKNOWN"
             value = "true"
           }
           env {
-            name = "WEB_OIDC_CLIENT_ID"
+            name  = "WEB_OIDC_CLIENT_ID"
             value = var.client_id
           }
           env {
-            name = "PROXY_USER_OIDC_CLAIM"
+            name  = "PROXY_USER_OIDC_CLAIM"
             value = "preferred_username"
           }
           env {
-            name = "PROXY_USER_CS3_CLAIM"
+            name  = "PROXY_USER_CS3_CLAIM"
             value = "username"
           }
           env {
-            name = "OCIS_EXCLUDE_RUN_SERVICES"
+            name  = "OCIS_EXCLUDE_RUN_SERVICES"
             value = "idp"
           }
           env {
-            name = "PROXY_CSP_CONFIG_FILE_LOCATION"
+            name  = "PROXY_CSP_CONFIG_FILE_LOCATION"
             value = "/etc/ocis-config/csp.yaml"
           }
           env {
-            name = "OCIS_ADMIN_USER_ID"
+            name  = "OCIS_ADMIN_USER_ID"
             value = ""
           }
           env {
-            name = "PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD"
+            name  = "PROXY_OIDC_ACCESS_TOKEN_VERIFY_METHOD"
             value = "none"
           }
         }
@@ -262,18 +262,18 @@ resource "kubernetes_stateful_set_v1" "ocis" {
 
 resource "kubernetes_service_v1" "ocis" {
   metadata {
-    name = "ocis"
-    namespace = kubernetes_namespace_v1.ocis.metadata.0.name
+    name      = "ocis"
+    namespace = kubernetes_namespace_v1.ocis.metadata[0].name
   }
   spec {
     selector = {
-        "app" = "ocis"
+      "app" = "ocis"
     }
     port {
-      name = "http"
-      port = 80
+      name        = "http"
+      port        = 80
       target_port = 9200
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -281,10 +281,10 @@ resource "kubernetes_service_v1" "ocis" {
 resource "kubernetes_manifest" "certificate_ocis_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
-    "kind" = "Certificate"
+    "kind"       = "Certificate"
     "metadata" = {
-      "name" = "ocis-billv-ca"
-      "namespace" = kubernetes_namespace_v1.ocis.metadata.0.name
+      "name"      = "ocis-billv-ca"
+      "namespace" = kubernetes_namespace_v1.ocis.metadata[0].name
     }
     "spec" = {
       "dnsNames" = [
@@ -302,15 +302,15 @@ resource "kubernetes_manifest" "certificate_ocis_billv_ca" {
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "IngressRoute"
+    "kind"       = "IngressRoute"
     "metadata" = {
-      "name" = "ocis"
-      "namespace" = kubernetes_namespace_v1.ocis.metadata.0.name
+      "name"      = "ocis"
+      "namespace" = kubernetes_namespace_v1.ocis.metadata[0].name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
       "routes" = [{
-        "kind" = "Rule"
+        "kind"  = "Rule"
         "match" = "Host(`ocis.billv.ca`)"
         "services" = [{
           "kind" = "Service"

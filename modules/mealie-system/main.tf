@@ -1,10 +1,10 @@
 terraform {
   required_providers {
     kubernetes = {
-        source = "hashicorp/kubernetes"
+      source = "hashicorp/kubernetes"
     }
     helm = {
-        source = "hashicorp/helm"
+      source = "hashicorp/helm"
     }
     aws = {
       source = "hashicorp/aws"
@@ -24,16 +24,16 @@ data "aws_ssm_parameter" "smtp" {
 
 resource "kubernetes_stateful_set_v1" "mealie" {
   metadata {
-      name = "mealie"
-      namespace = kubernetes_namespace_v1.mealie.metadata.0.name
+    name      = "mealie"
+    namespace = kubernetes_namespace_v1.mealie.metadata[0].name
   }
   spec {
     volume_claim_template {
       metadata {
-          name = "mealie-data"
+        name = "mealie-data"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -50,8 +50,8 @@ resource "kubernetes_stateful_set_v1" "mealie" {
     service_name = "mealie"
     template {
       metadata {
-        name = "mealie"
-        namespace = kubernetes_namespace_v1.mealie.metadata.0.name
+        name      = "mealie"
+        namespace = kubernetes_namespace_v1.mealie.metadata[0].name
         labels = {
           app = "mealie"
         }
@@ -59,112 +59,112 @@ resource "kubernetes_stateful_set_v1" "mealie" {
       spec {
         host_network = true
         container {
-          name = "mealie"
-          image = "hkotel/mealie:v3.13.1"
+          name              = "mealie"
+          image             = "hkotel/mealie:v3.13.1"
           image_pull_policy = "Always"
           volume_mount {
-            name = "mealie-data"
+            name       = "mealie-data"
             mount_path = "/app/data"
           }
           port {
             container_port = 9000
-            name = "http"
-            protocol = "TCP"
+            name           = "http"
+            protocol       = "TCP"
           }
           env {
-            name = "ALLOW_SIGNUP"
+            name  = "ALLOW_SIGNUP"
             value = "false"
           }
           env {
-            name = "LOG_LEVEL"
+            name  = "LOG_LEVEL"
             value = "ERROR"
           }
           env {
-            name = "DB_ENGINE"
+            name  = "DB_ENGINE"
             value = "sqlite"
           }
           env {
-            name = "PUID"
+            name  = "PUID"
             value = "1000"
           }
           env {
-            name = "PGID"
+            name  = "PGID"
             value = "1000"
           }
           env {
-            name = "TZ"
+            name  = "TZ"
             value = "America/Toronto"
           }
           env {
-            name = "BASE_URL"
+            name  = "BASE_URL"
             value = "https://mealie.billv.ca"
           }
           env {
-            name = "OIDC_AUTH_ENABLED"
+            name  = "OIDC_AUTH_ENABLED"
             value = "true"
           }
           env {
-            name = "OIDC_CONFIGURATION_URL"
+            name  = "OIDC_CONFIGURATION_URL"
             value = var.OIDC_CONFIGURATION_URL
           }
           env {
-            name = "OIDC_CLIENT_ID"
+            name  = "OIDC_CLIENT_ID"
             value = var.OIDC_CLIENT_ID
           }
           env {
-            name = "OIDC_CLIENT_SECRET"
+            name  = "OIDC_CLIENT_SECRET"
             value = var.OIDC_CLIENT_SECRET
           }
           env {
-            name = "OIDC_USER_GROUP"
+            name  = "OIDC_USER_GROUP"
             value = var.OIDC_USER_GROUP
           }
           env {
-            name = "OIDC_ADMIN_GROUP"
+            name  = "OIDC_ADMIN_GROUP"
             value = var.OIDC_ADMIN_GROUP
           }
           env {
-            name = "OIDC_PROVIDER_NAME"
+            name  = "OIDC_PROVIDER_NAME"
             value = var.OIDC_PROVIDER_NAME
           }
           env {
-            name = "SMTP_HOST"
+            name  = "SMTP_HOST"
             value = "smtp.zoho.com"
           }
           env {
-            name = "SMTP_PORT"
+            name  = "SMTP_PORT"
             value = "465"
           }
           env {
-            name = "SMTP_FROM_EMAIL"
+            name  = "SMTP_FROM_EMAIL"
             value = "bill@vandenberk.me"
           }
           env {
-            name = "SMTP_AUTH_STRATEGY"
+            name  = "SMTP_AUTH_STRATEGY"
             value = "SSL"
           }
           env {
-            name = "SMTP_USER"
+            name  = "SMTP_USER"
             value = "bill@vandenberk.me"
           }
           env {
-            name = "SMTP_PASSWORD"
+            name  = "SMTP_PASSWORD"
             value = data.aws_ssm_parameter.smtp.value
           }
           env {
-            name = "OPENAI_API_KEY"
+            name  = "OPENAI_API_KEY"
             value = "none"
           }
           env {
-            name = "OPENAI_BASE_URL"
+            name  = "OPENAI_BASE_URL"
             value = "http://10.206.101.10:11434"
           }
           env {
-            name = "OPENAI_MODEL"
+            name  = "OPENAI_MODEL"
             value = "qwen3:4b"
           }
           env {
-            name = "OPENAI_ENABLE_IMAGE_SERVICES"
+            name  = "OPENAI_ENABLE_IMAGE_SERVICES"
             value = "False"
           }
         }
@@ -175,18 +175,18 @@ resource "kubernetes_stateful_set_v1" "mealie" {
 
 resource "kubernetes_service_v1" "mealie" {
   metadata {
-    name = "mealie"
-    namespace = kubernetes_namespace_v1.mealie.metadata.0.name
+    name      = "mealie"
+    namespace = kubernetes_namespace_v1.mealie.metadata[0].name
   }
   spec {
     selector = {
-        "app" = "mealie"
+      "app" = "mealie"
     }
     port {
-      name = "http"
-      port = 80
+      name        = "http"
+      port        = 80
       target_port = 9000
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -194,10 +194,10 @@ resource "kubernetes_service_v1" "mealie" {
 resource "kubernetes_manifest" "certificate_mealie_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
-    "kind" = "Certificate"
+    "kind"       = "Certificate"
     "metadata" = {
-      "name" = "mealie-billv-ca"
-      "namespace" = kubernetes_namespace_v1.mealie.metadata.0.name
+      "name"      = "mealie-billv-ca"
+      "namespace" = kubernetes_namespace_v1.mealie.metadata[0].name
     }
     "spec" = {
       "dnsNames" = [
@@ -215,15 +215,15 @@ resource "kubernetes_manifest" "certificate_mealie_billv_ca" {
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "IngressRoute"
+    "kind"       = "IngressRoute"
     "metadata" = {
-      "name" = "mealie"
-      "namespace" = kubernetes_namespace_v1.mealie.metadata.0.name
+      "name"      = "mealie"
+      "namespace" = kubernetes_namespace_v1.mealie.metadata[0].name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
       "routes" = [{
-        "kind" = "Rule"
+        "kind"  = "Rule"
         "match" = "Host(`mealie.billv.ca`)"
         "services" = [{
           "kind" = "Service"

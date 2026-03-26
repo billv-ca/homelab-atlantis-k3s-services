@@ -1,10 +1,10 @@
 terraform {
   required_providers {
     kubernetes = {
-        source = "hashicorp/kubernetes"
+      source = "hashicorp/kubernetes"
     }
     helm = {
-        source = "hashicorp/helm"
+      source = "hashicorp/helm"
     }
     aws = {
       source = "hashicorp/aws"
@@ -20,16 +20,16 @@ resource "kubernetes_namespace_v1" "wireguard" {
 
 resource "kubernetes_stateful_set_v1" "wireguard" {
   metadata {
-      name = "wireguard"
-      namespace = kubernetes_namespace_v1.wireguard.metadata.0.name
+    name      = "wireguard"
+    namespace = kubernetes_namespace_v1.wireguard.metadata[0].name
   }
   spec {
     volume_claim_template {
       metadata {
-          name = "wireguard-data"
+        name = "wireguard-data"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -40,10 +40,10 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
     }
     volume_claim_template {
       metadata {
-          name = "wireguard-ui-data"
+        name = "wireguard-ui-data"
       }
       spec {
-        access_modes = ["ReadWriteOnce"]
+        access_modes       = ["ReadWriteOnce"]
         storage_class_name = "longhorn"
         resources {
           requests = {
@@ -60,8 +60,8 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
     service_name = "wireguard"
     template {
       metadata {
-        name = "wireguard"
-        namespace = kubernetes_namespace_v1.wireguard.metadata.0.name
+        name      = "wireguard"
+        namespace = kubernetes_namespace_v1.wireguard.metadata[0].name
         labels = {
           app = "wireguard"
         }
@@ -69,61 +69,61 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
       spec {
         security_context {
           sysctl {
-            name = "net.ipv4.conf.all.src_valid_mark"
+            name  = "net.ipv4.conf.all.src_valid_mark"
             value = "1"
           }
         }
         container {
-          name = "wireguard"
-          image = "linuxserver/wireguard:1.0.20250521"
+          name              = "wireguard"
+          image             = "linuxserver/wireguard:1.0.20250521"
           image_pull_policy = "Always"
           volume_mount {
-            name = "wireguard-data"
+            name       = "wireguard-data"
             mount_path = "/config/wg_confs"
           }
           port {
             container_port = 51820
-            name = "wg"
-            protocol = "UDP"
+            name           = "wg"
+            protocol       = "UDP"
           }
           security_context {
             capabilities {
-              add = [ "NET_ADMIN" , "SYS_MODULE" ]
+              add = ["NET_ADMIN", "SYS_MODULE"]
             }
           }
         }
         container {
-          name = "wireguard-ui"
-          image = "ngoduykhanh/wireguard-ui:0.6.2"
+          name              = "wireguard-ui"
+          image             = "ngoduykhanh/wireguard-ui:0.6.2"
           image_pull_policy = "Always"
           security_context {
             capabilities {
-              add = [ "NET_ADMIN" ]
+              add = ["NET_ADMIN"]
             }
           }
           port {
             container_port = 5000
-            name = "http"
-            protocol = "TCP"
+            name           = "http"
+            protocol       = "TCP"
           }
           volume_mount {
-            name = "wireguard-data"
+            name       = "wireguard-data"
             mount_path = "/etc/wireguard"
           }
           volume_mount {
-            name = "wireguard-ui-data"
+            name       = "wireguard-ui-data"
             mount_path = "/app/db"
           }
           env {
-            name = "DISABLE_LOGIN"
+            name  = "DISABLE_LOGIN"
             value = "true"
           }
           env {
-            name = "WGUI_MANAGE_RESTART"
+            name  = "WGUI_MANAGE_RESTART"
             value = "true"
           }
           env {
-            name = "WGUI_MANAGE_START"
+            name  = "WGUI_MANAGE_START"
             value = "false"
           }
         }
@@ -134,8 +134,8 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
 
 resource "kubernetes_service_v1" "wireguard" {
   metadata {
-    name = "wireguard"
-    namespace = kubernetes_namespace_v1.wireguard.metadata.0.name
+    name      = "wireguard"
+    namespace = kubernetes_namespace_v1.wireguard.metadata[0].name
     annotations = {
       "metallb.universe.tf/loadBalancerIPs" = "10.206.101.3"
     }
@@ -143,31 +143,31 @@ resource "kubernetes_service_v1" "wireguard" {
   spec {
     type = "LoadBalancer"
     selector = {
-        "app" = "wireguard"
+      "app" = "wireguard"
     }
     port {
-      name = "wg"
-      port = 51820
+      name        = "wg"
+      port        = 51820
       target_port = 51820
-      protocol = "UDP"
+      protocol    = "UDP"
     }
   }
 }
 
 resource "kubernetes_service_v1" "wireguard_ui" {
   metadata {
-    name = "wireguard-ui"
-    namespace = kubernetes_namespace_v1.wireguard.metadata.0.name
+    name      = "wireguard-ui"
+    namespace = kubernetes_namespace_v1.wireguard.metadata[0].name
   }
   spec {
     selector = {
-        "app" = "wireguard"
+      "app" = "wireguard"
     }
     port {
-      name = "http"
-      port = 5000
+      name        = "http"
+      port        = 5000
       target_port = 5000
-      protocol = "TCP"
+      protocol    = "TCP"
     }
   }
 }
@@ -175,10 +175,10 @@ resource "kubernetes_service_v1" "wireguard_ui" {
 resource "kubernetes_manifest" "certificate_wireguard_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
-    "kind" = "Certificate"
+    "kind"       = "Certificate"
     "metadata" = {
-      "name" = "wireguard-billv-ca"
-      "namespace" = kubernetes_namespace_v1.wireguard.metadata.0.name
+      "name"      = "wireguard-billv-ca"
+      "namespace" = kubernetes_namespace_v1.wireguard.metadata[0].name
     }
     "spec" = {
       "dnsNames" = [
@@ -196,18 +196,18 @@ resource "kubernetes_manifest" "certificate_wireguard_billv_ca" {
 resource "kubernetes_manifest" "ingressroute" {
   manifest = {
     "apiVersion" = "traefik.io/v1alpha1"
-    "kind" = "IngressRoute"
+    "kind"       = "IngressRoute"
     "metadata" = {
-      "name" = "wireguard"
-      "namespace" = kubernetes_namespace_v1.wireguard.metadata.0.name
+      "name"      = "wireguard"
+      "namespace" = kubernetes_namespace_v1.wireguard.metadata[0].name
     }
     "spec" = {
       "entryPoints" = ["websecure"]
       "routes" = [{
-        "kind" = "Rule"
+        "kind"  = "Rule"
         "match" = "Host(`wireguard.billv.ca`)"
         "middlewares" = [{
-          "name" = "authentik"
+          "name"      = "authentik"
           "namespace" = "wireguard"
         }]
         "services" = [{
