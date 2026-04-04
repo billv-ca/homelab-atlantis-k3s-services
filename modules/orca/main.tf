@@ -47,6 +47,13 @@ resource "kubernetes_stateful_set_v1" "orca" {
             name           = "http"
           }
 
+          resources {
+            requests = {
+              cpu = "1500m"
+              memory = "2000Mi"
+            }
+          }
+
           volume_mount {
             mount_path = "/config"
             name       = "config"
