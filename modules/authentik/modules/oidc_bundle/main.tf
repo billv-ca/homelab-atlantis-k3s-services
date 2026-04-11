@@ -56,6 +56,7 @@ resource "authentik_provider_oauth2" "app" {
   property_mappings = data.authentik_property_mapping_provider_scope.scope.ids
   allowed_redirect_uris = var.allowed_redirect_uris
   client_type = var.client_type
+  access_code_validity = var.access_code_validity
   access_token_validity = var.access_token_validity
 }
 
