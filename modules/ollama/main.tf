@@ -30,6 +30,10 @@ ollama:
 
 image:
   tag: 0.20.7-rocm
+
+extraEnv:
+  - name: "OLLAMA_CONTEXT_LENGTH"
+    value: 64000
  EOF
 ]
 }
