@@ -195,6 +195,7 @@ module "ocis" {
     matching_mode = "regex",
     url           = "https://ocis.billv.ca/.*",
   }]
+  access_code_validity = "hours=4"
   access_token_validity = "hours=4"
   authentication_flow = authentik_flow.authentication.name
 }
