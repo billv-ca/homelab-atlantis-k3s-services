@@ -33,7 +33,7 @@ image:
 
 extraEnv:
   - name: "OLLAMA_CONTEXT_LENGTH"
-    value: 64000
+    value: "32000"
  EOF
 ]
 }
