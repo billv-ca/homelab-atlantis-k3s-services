@@ -27,6 +27,9 @@ ollama:
     enabled: true
     type: amd
     number: 1
+
+image:
+  tag: 0.20.7-rocm
  EOF
 ]
 }
