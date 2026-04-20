@@ -89,7 +89,7 @@ resource "kubernetes_stateful_set_v1" "craftycontroller" {
             run_as_non_root = true
           }
           name              = "crafty-controller"
-          image             = "registry.gitlab.com/crafty-controller/crafty-4:4.10.3"
+          image             = "registry.gitlab.com/crafty-controller/crafty-4:4.10.4"
           image_pull_policy = "Always"
           resources {
             requests = {
