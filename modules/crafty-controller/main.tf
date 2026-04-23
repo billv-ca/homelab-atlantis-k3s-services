@@ -153,7 +153,7 @@ resource "kubernetes_service_v1" "clusterip" {
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
   }
   spec {
-    type = "LoadBalancer"
+    type = "ClusterIP"
     selector = {
       app = "crafty-controller"
     }
