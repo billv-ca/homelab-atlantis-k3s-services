@@ -120,9 +120,9 @@ resource "kubernetes_stateful_set_v1" "craftycontroller" {
   }
 }
 
-resource "kubernetes_service_v1" "craftycontroller" {
+resource "kubernetes_service_v1" "loadbalancer" {
   metadata {
-    name      = "crafty-controller"
+    name      = "crafty-controller-lb"
     namespace = kubernetes_namespace_v1.namespace.metadata[0].name
     annotations = {
       "metallb.universe.tf/loadBalancerIPs" : "10.206.102.1"
@@ -134,12 +134,6 @@ resource "kubernetes_service_v1" "craftycontroller" {
       app = "crafty-controller"
     }
     port {
-      name        = "https"
-      port        = 443
-      target_port = 8443
-      protocol    = "TCP"
-    }
-    port {
       name        = "mc1"
       port        = 25565
       target_port = 25565
@@ -149,6 +143,24 @@ resource "kubernetes_service_v1" "craftycontroller" {
       name        = "mc2"
       port        = 25566
       target_port = 25566
+      protocol    = "TCP"
+    }
+  }
+}
+resource "kubernetes_service_v1" "clusterip" {
+  metadata {
+    name      = "crafty-controller"
+    namespace = kubernetes_namespace_v1.namespace.metadata[0].name
+  }
+  spec {
+    type = "LoadBalancer"
+    selector = {
+      app = "crafty-controller"
+    }
+    port {
+      name        = "https"
+      port        = 443
+      target_port = 8443
       protocol    = "TCP"
     }
   }
