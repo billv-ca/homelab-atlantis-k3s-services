@@ -4,7 +4,7 @@ resource "helm_release" "community-prometheus" {
   repository = "https://prometheus-community.github.io/helm-charts"
   chart = "kube-prometheus-stack"
   name = "kube-prometheus-stack"
-  version = "84.1.1"
+  version = "84.1.2"
   create_namespace = true
   namespace = "monitoring"
 
