@@ -24,7 +24,7 @@ resource "helm_release" "trilium" {
   repository       = "https://triliumnext.github.io/helm-charts"
   chart            = "trilium"
   name             = "trilium"
-  version          = "1.3.0"
+  version          = "2.0.0"
   create_namespace = true
   namespace        = kubernetes_namespace_v1.namespace.metadata[0].name
   set_sensitive = [{
