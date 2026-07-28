@@ -60,7 +60,7 @@ resource "kubernetes_stateful_set_v1" "mealie" {
         host_network = true
         container {
           name              = "mealie"
-          image             = "hkotel/mealie:v3.21.0"
+          image             = "hkotel/mealie:v3.22.0"
           image_pull_policy = "Always"
           volume_mount {
             name       = "mealie-data"
