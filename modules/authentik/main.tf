@@ -131,6 +131,19 @@ module "headlamp" {
   access_token_validity = "hours=4"
 }
 
+module "traefik" {
+  source = "./modules/forwardauth_bundle"
+  app_name = "Traefik"
+  app_slug = "traefik"
+  app_external_host = "https://traefik.billv.ca/"
+  app_namespace = "kube-system"
+  app_icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Traefik_Logo.svg/960px-Traefik_Logo.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail&_=20230809194522"
+  outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
+  additional_auth_response_headers = ["Authorization"]
+  additional_property_mapping_ids = [authentik_property_mapping_provider_scope.kube_token.id]
+}
+
 module "grafana" {
   source = "./modules/oidc_bundle"
   signing_key = authentik_certificate_key_pair.cert_manager.id
@@ -377,6 +390,7 @@ resource "authentik_user" "bill" {
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
             module.headlamp.access_group_id,
+            module.traefik.access_group_id,
             module.open-webui.admins_group_id,
             module.grafana.admins_group_id,
             module.trilium.admins_group_id,
@@ -441,6 +455,7 @@ resource "kubernetes_manifest" "traefik-outpost-tls" {
         "orca.billv.ca",
         "kube.billv.ca",
         "atlantis.billv.ca",
+        "traefik.billv.ca"
       ]
       "issuerRef" = {
         "kind" = "ClusterIssuer"
@@ -460,7 +475,8 @@ resource "authentik_outpost" "traefik" {
     module.longhorn.provider_id,
     module.atlantis.provider_id,
     module.meshcentral.provider_id,
-    module.headlamp.provider_id
+    module.headlamp.provider_id,
+    module.traefik.provider_id
   ]
   service_connection = authentik_service_connection_kubernetes.local.id
 }
