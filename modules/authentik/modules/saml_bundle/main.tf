@@ -36,6 +36,7 @@ data "authentik_property_mapping_provider_saml" "property_mappings" {
 
 resource "authentik_provider_saml" "provider" {
     acs_url = var.acs_url
+    issuer_override = "authentik"
     name = var.app_name
     authorization_flow = data.authentik_flow.default_authorization_flow.id
     authentication_flow = data.authentik_flow.default_authentication_flow.id
