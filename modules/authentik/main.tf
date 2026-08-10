@@ -188,6 +188,7 @@ module "trilium" {
   }]
   access_token_validity = "hours=24"
   authentication_flow = authentik_flow.authentication.name
+  sub_mode = "user_email"
 }
 
 module "ocis" {

@@ -106,3 +106,9 @@ variable "app_group" {
   default = "Home Services"
   description = "Group to assign the application to. {Optional}"
 }
+
+variable "sub_mode" {
+  type = string
+  default = "hashed_user_id"
+  description = "User data used to identify the user to the service returned in the JWT"
+}
