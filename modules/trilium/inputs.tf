@@ -1,5 +1,5 @@
 variable "OIDC_CONFIGURATION_URL" {
-  default = "https://auth.billv.ca/application/o/trilium"
+  default = "https://auth.billv.ca/application/o/trilium/"
   type    = string
 }
 
