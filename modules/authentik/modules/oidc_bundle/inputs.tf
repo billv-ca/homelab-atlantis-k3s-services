@@ -91,11 +91,12 @@ variable "oauth_scopes" {
 }
 
 variable "allowed_redirect_uris" {
-  type = list(object({matching_mode = string, url = string}))
+  type = list(object({matching_mode = string, url = string, redirect_uri_type = optional(string)}))
   default = [
     {
       matching_mode = "regex",
       url           = "https://.*.billv.ca/.*",
+      redirect_uri_type = "authorization"
     }
   ]
   description = "Configuration for allowed application redirect URLs. (Optional)"

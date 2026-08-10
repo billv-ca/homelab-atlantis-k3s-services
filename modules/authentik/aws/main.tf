@@ -33,6 +33,7 @@ data "authentik_certificate_key_pair" "generated" {
 
 resource "authentik_provider_saml" "aws" {
     acs_url = "https://signin.aws.amazon.com/saml"
+    issuer_override = "authentik"
     name = "AWS"
     authorization_flow = data.authentik_flow.default_authorization_flow.id
     invalidation_flow = data.authentik_flow.default_invalidation_flow.id

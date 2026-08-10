@@ -70,18 +70,22 @@ module "proxmox" {
   allowed_redirect_uris = [{
       matching_mode = "regex",
       url           = "https://10.206.0.2:8006.*",
+      redirect_uri_type = "authorization"
     },
     {
       matching_mode = "regex",
       url           = "https://10.206.0.3:8006.*",
+      redirect_uri_type = "authorization"
     },
     {
       matching_mode = "regex",
       url           = "https://10.206.0.4:8006.*",
+      redirect_uri_type = "authorization"
     },
     {
       matching_mode = "regex",
       url           = "https://proxmox.billv.ca.*",
+      redirect_uri_type = "authorization"
     }]
   authentication_flow = authentik_flow.authentication.name
 }
@@ -96,6 +100,7 @@ module "mealie" {
   allowed_redirect_uris = [{
       matching_mode = "regex",
       url           = "https://mealie.billv.ca/.*",
+      redirect_uri_type = "authorization"
   }]
   access_token_validity = "days=14"
   authentication_flow = authentik_flow.authentication.name
@@ -154,6 +159,7 @@ module "grafana" {
   allowed_redirect_uris = [{
       matching_mode = "regex",
       url           = "https://grafana.billv.ca/.*",
+      redirect_uri_type = "authorization"
   }]
   access_token_validity = "days=14"
   authentication_flow = authentik_flow.authentication.name
@@ -169,6 +175,7 @@ module "open-webui" {
   allowed_redirect_uris = [{
       matching_mode = "regex",
       url           = "https://ai.billv.ca/.*",
+      redirect_uri_type = "authorization"
   }]
   access_token_validity = "hours=24"
   authentication_flow = authentik_flow.authentication.name
@@ -185,6 +192,7 @@ module "trilium" {
   allowed_redirect_uris = [{
       matching_mode = "regex",
       url           = "https://notes.billv.ca/.*",
+      redirect_uri_type = "authorization"
   }]
   access_token_validity = "hours=24"
   authentication_flow = authentik_flow.authentication.name
@@ -208,6 +216,7 @@ module "ocis" {
   allowed_redirect_uris = [{
     matching_mode = "regex",
     url           = "https://ocis.billv.ca/.*",
+    redirect_uri_type = "authorization"
   }]
   access_code_validity = "hours=4"
   access_token_validity = "hours=4"
@@ -232,10 +241,12 @@ module "ocis-desktop" {
   allowed_redirect_uris = [{
     matching_mode = "regex",
     url           = "http://127.0.0.1(:.*)?",
+    redirect_uri_type = "authorization"
   },
   {
     matching_mode = "regex",
     url           = "http://localhost(:.*)?",
+    redirect_uri_type = "authorization"
   }]
   authentication_flow = authentik_flow.authentication.name
 }
@@ -257,10 +268,12 @@ module "ocis-iOS" {
   allowed_redirect_uris = [{
     matching_mode = "strict",
     url           = "oc://ios.owncloud.com",
+    redirect_uri_type = "authorization"
   },
   {
     matching_mode = "strict",
     url           = "oc.ios://ios.owncloud.com",
+    redirect_uri_type = "authorization"
   }]
   access_token_validity = "days=30"
   authentication_flow = authentik_flow.authentication.name
@@ -283,6 +296,7 @@ module "ocis-android" {
   allowed_redirect_uris = [{
     matching_mode = "strict",
     url           = "oc://android.owncloud.com",
+    redirect_uri_type = "authorization"
   }]
   authentication_flow = authentik_flow.authentication.name
 }
