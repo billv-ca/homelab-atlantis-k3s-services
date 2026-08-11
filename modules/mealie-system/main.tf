@@ -104,6 +104,10 @@ resource "kubernetes_stateful_set_v1" "mealie" {
             value = "true"
           }
           env {
+            name  = "OIDC_REQUIRES_EMAIL_VERIFICATION"
+            value = "false"
+          }
+          env {
             name  = "OIDC_CONFIGURATION_URL"
             value = var.OIDC_CONFIGURATION_URL
           }
