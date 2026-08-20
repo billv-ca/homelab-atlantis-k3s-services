@@ -41,7 +41,7 @@ resource "helm_release" "trilium" {
     },
     {
       name  = "controllers.main.containers.trilium.image.tag"
-      value = "v0.104.1"
+      value = var.trilium_tag
     },
     {
       name  = "controllers.main.containers.trilium.image.repository"

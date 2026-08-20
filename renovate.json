@@ -2,5 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended"
-  ]
+  ],
+  "customManagers": [
+     {
+       "customType": "regex",
+       "fileMatch": ["\\.tf$"],
+       "matchStrings": [
+         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s*\\n\\s*\\w+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+       ],
+       "datasourceTemplate": "{{#if datasource}}{{datasource}}{{else}}docker{{/if}}"
+     }
+   ]
 }

@@ -12,3 +12,8 @@ variable "OIDC_CLIENT_SECRET" {
   sensitive = true
 }
 
+variable "trilium_tag" {
+  type = string
+  # renovate: datasource=docker depName=triliumnext/trilium
+  default = "v0.104.1"
+}
