@@ -40,6 +40,7 @@ resource "kubernetes_stateful_set_v1" "orca" {
         container {
           name  = "orca"
           image = "linuxserver/orcaslicer:2.4.2"
+          image_pull_policy = "Always"
 
           port {
             container_port = 3000
