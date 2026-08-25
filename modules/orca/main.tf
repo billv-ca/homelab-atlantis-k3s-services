@@ -48,10 +48,19 @@ resource "kubernetes_stateful_set_v1" "orca" {
             name           = "http"
           }
 
+          env {
+            name = "PIXELFLUX_WAYLAND"
+            value = "true"
+          }
+
           resources {
             requests = {
               cpu = "1500m"
               memory = "2000Mi"
+              "gpu.intel.com/i915" = 1
+            }
+            limits = {
+              "gpu.intel.com/i915" = 1
             }
           }
 
