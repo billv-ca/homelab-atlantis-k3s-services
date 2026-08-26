@@ -53,6 +53,11 @@ resource "kubernetes_stateful_set_v1" "orca" {
             value = "true"
           }
 
+          env {
+            name = "NO_DECOR"
+            value = "true"
+          }
+
           resources {
             requests = {
               cpu = "1500m"
