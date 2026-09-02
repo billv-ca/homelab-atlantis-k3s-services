@@ -125,6 +125,10 @@ resource "kubernetes_stateful_set_v1" "ocis" {
         labels = {
           app = "ocis"
         }
+        annotations = {
+          # This hash changes when the configmap data changes, triggering a rolling update
+          config_hash = md5(jsonencode(kubernetes_config_map_v1.config.data))
+        }
       }
       spec {
         init_container {
