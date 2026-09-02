@@ -334,6 +334,16 @@ module "atlantis" {
   authentication_flow = authentik_flow.authentication.name
 }
 
+module "falco" {
+  source = "./modules/forwardauth_bundle"
+  app_icon = "https://raw.githubusercontent.com/falcosecurity/falco/refs/heads/master/brand/teal-logo.svg"
+  app_name = "Falco"
+  app_slug = "falco"
+  app_external_host = "https://falco.billv.ca"
+  app_namespace = "falco"
+  outpost_name = local.traefik_outpost_name
+  authentication_flow = authentik_flow.authentication.name
+}
 
 module "meshcentral" {
   source = "./modules/forwardauth_bundle"
@@ -402,6 +412,7 @@ resource "authentik_user" "bill" {
             module.proxmox.users_group_id, 
             module.pihole.access_group_id,
             module.longhorn.access_group_id,
+            module.falco.access_group_id,
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
             module.headlamp.access_group_id,
@@ -470,7 +481,8 @@ resource "kubernetes_manifest" "traefik-outpost-tls" {
         "orca.billv.ca",
         "kube.billv.ca",
         "atlantis.billv.ca",
-        "traefik.billv.ca"
+        "traefik.billv.ca",
+        "falco.billv.ca"
       ]
       "issuerRef" = {
         "kind" = "ClusterIssuer"
@@ -491,7 +503,8 @@ resource "authentik_outpost" "traefik" {
     module.atlantis.provider_id,
     module.meshcentral.provider_id,
     module.headlamp.provider_id,
-    module.traefik.provider_id
+    module.traefik.provider_id,
+    module.falco.provider_id
   ]
   service_connection = authentik_service_connection_kubernetes.local.id
 }
