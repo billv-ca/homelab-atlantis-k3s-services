@@ -68,12 +68,7 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
       }
       spec {
         host_network      = true
-        security_context {
-          sysctl {
-            name  = "net.ipv4.conf.all.src_valid_mark"
-            value = "1"
-          }
-        }
+
         container {
           name              = "wireguard"
           image             = "linuxserver/wireguard:1.0.20260223"
