@@ -67,6 +67,7 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
         }
       }
       spec {
+        host_network      = true
         security_context {
           sysctl {
             name  = "net.ipv4.conf.all.src_valid_mark"
@@ -77,7 +78,6 @@ resource "kubernetes_stateful_set_v1" "wireguard" {
           name              = "wireguard"
           image             = "linuxserver/wireguard:1.0.20260223"
           image_pull_policy = "Always"
-          host_network      = true
           volume_mount {
             name       = "wireguard-data"
             mount_path = "/config/wg_confs"
