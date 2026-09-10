@@ -305,7 +305,7 @@ module "pihole" {
   source = "./modules/forwardauth_bundle"
   app_name = "Pi Hole"
   app_slug = "pihole"
-  app_external_host = "https://pihole.billv.ca/admin/"
+  app_external_host = "https://pihole.billv.ca/"
   app_namespace = "pihole-system"
   app_icon = "https://upload.wikimedia.org/wikipedia/commons/0/00/Pi-hole_Logo.png?20180925041558"
   outpost_name = local.traefik_outpost_name
