@@ -4,15 +4,23 @@
     "config:recommended"
   ],
   "customManagers": [
-     {
-       "customType": "regex",
-       "managerFilePatterns": [
-           "/\\.tf$/"
-        ],
-       "matchStrings": [
-         "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s*\\n\\s*\\w+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
-       ],
-       "datasourceTemplate": "{{#if datasource}}{{datasource}}{{else}}docker{{/if}}"
-     }
-   ]
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/\\.tf$/"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>\\S+)\\s+depName=(?<depName>\\S+)\\s*\\n\\s*\\w+\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "{{#if datasource}}{{datasource}}{{else}}docker{{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["terraform"],
+      "matchPackageNames": ["kube-prometheus-stack"],
+      "matchUpdateTypes": ["patch"],
+      "enabled": false
+    }
+  ]
 }
