@@ -81,6 +81,10 @@ module "pfsense_route53_credentials" {
   source = "./modules/pfsense-route53-credentials"
 }
 
+module "system_upgrade" {
+  source = "./modules/system-upgrade"
+}
+
 module "dns" {
   source = "./modules/dns"
 }
