@@ -30,6 +30,7 @@ resource "kubernetes_deployment_v1" "ffmpeg_kidcams" {
       }
 
       spec {
+        termination_grace_period_seconds = 1
         container {
           name  = "ffmpeg"
           image = "linuxserver/ffmpeg:latest"
@@ -54,7 +55,8 @@ resource "kubernetes_deployment_v1" "ffmpeg_kidcams" {
                      [0:a]asetpts=N/SR/TB[a_fixed]
                    " \
                    -map "[v_out]" -c:v h264_vaapi -r 15 -g 30 -b:v 2.5M -maxrate 3.5M -bufsize 1M -async_depth 4 \
-                   -map "[a_fixed]" -c:a aac -b:a 128k -ac 2 \
+                   -map "[a_fixed]" -c:a aac -b:a 32k -ac 2 \
+                   -rtsp_transport tcp \
                    -f rtsp rtsp://10.206.2.7:8554/grid 2>&1
             EOT
           ]
