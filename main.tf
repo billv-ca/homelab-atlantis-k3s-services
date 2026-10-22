@@ -37,6 +37,10 @@ module "ollama" {
   source = "./modules/ollama"
 }
 
+module "ffmpeg-kidcams" {
+  source = "./modules/ffmpeg-kidcams"
+}
+
 module "orca" {
   source = "./modules/orca"
 }
