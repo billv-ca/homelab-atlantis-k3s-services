@@ -89,7 +89,7 @@ resource "helm_release" "openwebui" {
   {
     name = "extraEnvVars[3].value"
     value = "https://ai.billv.ca"
-  }
+  },
   {
     name = "extraEnvVars[4].name"
     value = "RAG_EMBEDDING_ENGINE"
@@ -97,8 +97,8 @@ resource "helm_release" "openwebui" {
   {
     name = "extraEnvVars[4].value"
     value = "ollama"
-  }
-    {
+  },
+  {
     name = "extraEnvVars[5].name"
     value = "RAG_EMBEDDING_MODEL"
   },
