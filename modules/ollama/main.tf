@@ -28,9 +28,6 @@ ollama:
     type: amd
     number: 1
 
-image:
-  tag: 0.20.7-rocm
-
 extraEnv:
   - name: "OLLAMA_CONTEXT_LENGTH"
     value: "32000"
