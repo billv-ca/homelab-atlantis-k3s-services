@@ -92,27 +92,20 @@ resource "helm_release" "openwebui" {
   },
   {
     name = "extraEnvVars[4].name"
-    value = "RAG_EMBEDDING_ENGINE"
-  },
-  {
-    name = "extraEnvVars[4].value"
-    value = "ollama"
-  },
-  {
-    name = "extraEnvVars[5].name"
     value = "WEB_SEARCH_ENGINE"
   },
   {
-    name = "extraEnvVars[5].value"
+    name = "extraEnvVars[4].value"
     value = "duckduckgo"
   },
   {
-    name = "extraEnvVars[6].name"
+    name = "extraEnvVars[5].name"
     value = "ENABLE_WEB_SEARCH"
   },
   {
-    name = "extraEnvVars[6].value"
-    value = "\"true\""
+    name = "extraEnvVars[5].value"
+    value = "true"
+    type = "string"
   }]
 
   set_sensitive = [{
