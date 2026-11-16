@@ -100,11 +100,11 @@ resource "helm_release" "openwebui" {
   },
   {
     name = "extraEnvVars[5].name"
-    value = "RAG_EMBEDDING_MODEL"
+    value = "WEB_SEARCH_ENGINE"
   },
   {
     name = "extraEnvVars[5].value"
-    value = "nomic-embed-text"
+    value = "duckduckgo"
   }]
 
   set_sensitive = [{
