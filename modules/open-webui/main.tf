@@ -105,6 +105,14 @@ resource "helm_release" "openwebui" {
   {
     name = "extraEnvVars[5].value"
     value = "duckduckgo"
+  },
+  {
+    name = "extraEnvVars[6].name"
+    value = "ENABLE_WEB_SEARCH"
+  },
+  {
+    name = "extraEnvVars[6].value"
+    value = "\"true\""
   }]
 
   set_sensitive = [{
