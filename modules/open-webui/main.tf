@@ -1,3 +1,11 @@
+data "aws_ssm_parameter" "homeassistant_token" {
+  name = "/homeassistant/token"
+}
+
+data "aws_ssm_parameter" "triliumnotes_token" {
+  name = "/triliumnotes/token"
+}
+
 resource "helm_release" "openwebui" {
   repository = "https://helm.openwebui.com/"
   chart = "open-webui"
@@ -6,7 +14,12 @@ resource "helm_release" "openwebui" {
   create_namespace = true
   namespace = "open-webui"
 
-  set = [{
+  set = [
+  {
+    name = "podAnnotations.config_hash"
+    value = sha256(jsonencode(kubernetes_secret_v1.tool_server_connections.data))
+  },
+  {
     name = "ollama.enabled"
     value = false
   },
@@ -106,6 +119,18 @@ resource "helm_release" "openwebui" {
     name = "extraEnvVars[5].value"
     value = "true"
     type = "string"
+  },
+  {
+    name = "extraEnvVars[6].name"
+    value = "TOOL_SERVER_CONNECTIONS"
+  },
+  {
+    name = "extraEnvVars[6].valueFrom.secretKeyRef.name"
+    value = "open-webui-tool-server-connections"
+  },
+  {
+    name = "extraEnvVars[6].valueFrom.secretKeyRef.key"
+    value = "TOOL_SERVER_CONNECTIONS"
   }]
 
   set_sensitive = [{
@@ -114,6 +139,66 @@ resource "helm_release" "openwebui" {
   }]
 }
 
+resource "kubernetes_secret_v1" "tool_server_connections" {
+  metadata {
+    namespace = "open-webui"
+    name = "open-webui-tool-server-connections"
+  }
+  data = {
+    TOOL_SERVER_CONNECTIONS = jsonencode([
+      {
+        type = "mcp"
+        url = "https://assistant.home.billv.ca/api/mcp"
+        spec_type = "url"
+        spec = ""
+        path = "openapi.json"
+        auth_type = "bearer"
+        config = {
+          enabled = "true"
+          access_grants = [
+              {
+                principal_type = "user"
+                principal_id   = "*"
+                permission     = "read"
+              }
+          ]
+        }
+        key = data.aws_ssm_parameter.homeassistant_token.value
+        info = {
+          id = "homeassistant"
+          name = "HomeAssistant"
+          description = ""
+        }
+      },
+      {
+        type = "mcp"
+        url = "http://trilium.trilium.svc.cluster.local:8080/mcp"
+        spec_type = "url"
+        spec = ""
+        path = "openapi.json"
+        auth_type = "bearer"
+        config = {
+          enabled = "true"
+          access_grants = [
+              {
+                principal_type = "user"
+                principal_id   = "*"
+                permission     = "read"
+              }
+          ]
+        }
+        key = data.aws_ssm_parameter.triliumnotes_token.value
+        info = {
+          id = "trilium-notes"
+          name = "Trilium Notes"
+          description = ""
+        }
+      }
+    ])
+  }
+
+  type = "Opaque"
+}
 resource "kubernetes_manifest" "certificate_ollama_billv_ca" {
   manifest = {
     "apiVersion" = "cert-manager.io/v1"
