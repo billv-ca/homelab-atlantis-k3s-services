@@ -106,6 +106,22 @@ module "mealie" {
   authentication_flow = authentik_flow.authentication.name
 }
 
+module "homeassistant" {
+  source = "./modules/oidc_bundle"
+  signing_key = authentik_certificate_key_pair.cert_manager.id
+  app_name = "HomeAssistant"
+  app_slug = "homeassistant"
+  app_icon = "https://raw.githubusercontent.com/home-assistant/home-assistant.io/refs/heads/current/source/static/icons/favicon-192x192.png"
+  app_launch_url = "https://assistant.home.billv.ca"
+  allowed_redirect_uris = [{
+      matching_mode = "regex",
+      url           = "https://assistant.home.billv.ca/.*",
+      redirect_uri_type = "authorization"
+  }]
+  access_token_validity = "days=14"
+  authentication_flow = authentik_flow.authentication.name
+}
+
 resource "authentik_property_mapping_provider_scope" "kube_token" {
   name       = "kubetoken"
   scope_name = "kubetoken"
@@ -415,6 +431,7 @@ resource "authentik_user" "bill" {
             module.falco.access_group_id,
             module.wireguard.access_group_id,
             module.mealie.admins_group_id,
+            module.homeassistant.admins_group_id,
             module.headlamp.access_group_id,
             module.traefik.access_group_id,
             module.open-webui.admins_group_id,
@@ -436,6 +453,7 @@ resource "authentik_user" "trina" {
   name = "Trina Vandenberk"
   password = sensitive(random_password.trina_pw.result)
   groups = [module.mealie.users_group_id,
+            module.homeassistant.users_group_id,
             module.open-webui.users_group_id,
             module.trilium.users_group_id,
             authentik_group.zoho_users.id,

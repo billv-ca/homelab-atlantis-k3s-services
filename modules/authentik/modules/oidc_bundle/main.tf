@@ -59,6 +59,7 @@ resource "authentik_provider_oauth2" "app" {
   access_code_validity = var.access_code_validity
   access_token_validity = var.access_token_validity
   sub_mode = var.sub_mode
+  grant_types = var.grant_types
 }
 
 resource "authentik_application" "app" {

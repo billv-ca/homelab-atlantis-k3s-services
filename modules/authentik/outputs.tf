@@ -22,10 +22,18 @@ output "mealie_client_secret" {
   sensitive = true
 }
 
+output "homeassistant_client_id" {
+  value = module.homeassistant.client_id
+}
+
+output "homeassistant_client_secret" {
+  value = module.homeassistant.client_secret
+  sensitive = true
+}
+
 output "ocis_client_id" {
   value = module.ocis.client_id
 }
-
 
 output "open-webui_client_id" {
   value = module.open-webui.client_id
