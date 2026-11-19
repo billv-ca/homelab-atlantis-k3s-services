@@ -113,3 +113,12 @@ variable "sub_mode" {
   default = "hashed_user_id"
   description = "User data used to identify the user to the service returned in the JWT"
 }
+
+variable "grant_types" {
+  type = list(string)
+  default = [
+    "authorization_code",
+    "refresh_token"
+  ]
+  description = "Grant types usable by the client"
+}

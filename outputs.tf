@@ -22,3 +22,13 @@ output "proxmox_client_secret" {
   value = module.authentik.proxmox_client_secret
   sensitive = true
 }
+
+output "homeassistant_client_id" {
+  value = module.authentik.homeassistant_client_id
+  sensitive = true
+}
+
+output "homeassistant_client_secret" {
+  value = module.authentik.homeassistant_client_secret
+  sensitive = true
+}
