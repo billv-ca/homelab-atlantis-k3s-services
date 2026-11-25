@@ -21,6 +21,12 @@
       "matchPackageNames": ["kube-prometheus-stack"],
       "matchUpdateTypes": ["patch"],
       "enabled": false
+    },
+    {
+      "matchManagers": ["terraform"],
+      "matchPackageNames": ["kube-prometheus-stack"],
+      "matchUpdateTypes": ["minor"],
+      "enabled": false
     }
   ]
 }
